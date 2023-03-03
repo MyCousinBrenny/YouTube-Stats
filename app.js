@@ -72,14 +72,10 @@ function last12Stats(stats) {
             key++;
         } else {
             continue;
-        }
-        
+        }  
     }
-
-        console.log(last12Vids);
-        console.log(stats);
-    
-    
+    console.log(last12Vids);   
+   
     stats.sort((a, b) => a - b.views);
 
     stats.shift();
@@ -87,7 +83,6 @@ function last12Stats(stats) {
     let avgViews = stats.reduce((a, b) => a + b.views, 0) / stats.length;
     let avgLikes = stats.reduce((a, b) => a + b.likes, 0) / stats.length;
     let avgComments = stats.reduce((a, b) => a + b.comments, 0) / stats.length;
-    //console.log(stats);
     console.log(avgViews);
     console.log(avgLikes);
     console.log(avgComments);
