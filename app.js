@@ -1,11 +1,11 @@
 var apiKey = require('./key.js');
-var vid = 'Gkr8pipJzXA';
+var vidTest = 'Gkr8pipJzXA';
 var parts = ['statistics', 'snippet', 'contentDetails'];
 var itemArray = [];
 
 //Main app function in IIFE below - Functions broken out seperately for potential future uses
 (async function () {
-    let chanId = await channelId(apiKey, vid);
+    let chanId = await channelId(apiKey, vidTest);
     let vids = await channelData(apiKey, chanId);
     let vidsData = await videoData(apiKey, vids, parts);
     last12Stats(vidsData);
