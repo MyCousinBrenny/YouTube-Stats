@@ -6,7 +6,8 @@ var itemArray = [];
 //Main app function in IIFE below - Functions broken out seperately for potential future uses
 (async function () {
     let chanId = await channelId(apiKey, vidTest);
-    let vids = await channelData(apiKey, chanId);
+    let uploadPlaylist = "UU" + chanId.substring(2);
+    let vids = await channelData(apiKey, uploadPlaylist);
     let vidsData = await videoData(apiKey, vids, parts);
     last12Stats(vidsData);
 })();
@@ -23,18 +24,17 @@ async function channelId(key, vidId) {
     return(chanData.items[0].snippet.channelId);
 }
 
-async function channelData(key, channelId) {
+async function channelData(key, playlistId) {
     let urlString =
-        "https://www.googleapis.com/youtube/v3/search" +
-        `?key=${key}&channelId=${channelId}&part=snippet&order=date&maxResults=50`;
+        "https://www.googleapis.com/youtube/v3/playlistItems" +
+        `?key=${key}&playlistId=${playlistId}&part=contentDetails&maxResults=50`;
     let response = await fetch(urlString);
     if (!response.ok) {
         throw new Error(await response.text());
 }
-
-let channelVids = await response.json();
+    let channelVids = await response.json();
     for(var key in channelVids.items) {
-        itemArray[key] = channelVids.items[key].id.videoId;
+        itemArray[key] = channelVids.items[key].contentDetails.videoId;
     }
     return itemArray;
 }
@@ -65,11 +65,11 @@ async function videoData(key, vidIds, parts) {
 
 //Last 12 Stats calc removes the videos with the hightest and lowest views, then calc the average views, likes, and comments for the middle 10 videos
 function last12Stats(stats) {
+    //console.log(stats);
     let last12Vids = [];
-    for(let key = 0; last12Vids.length < 12;){
+    for(let key = 0; last12Vids.length < 12; key++){
         if (stats[key].length.includes('M')) {
             last12Vids[key] = stats[key];
-            key++;
         } else {
             continue;
         }  
