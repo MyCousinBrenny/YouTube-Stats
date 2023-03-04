@@ -9,7 +9,7 @@ var itemArray = [];
     let uploadPlaylist = "UU" + chanId.substring(2);
     let vids = await channelData(apiKey, uploadPlaylist);
     let vidsData = await videoData(apiKey, vids, parts);
-    last12Stats(vidsData);
+    console.log(last12Stats(vidsData));
 })();
 
 async function channelId(key, vidId) {
@@ -67,20 +67,22 @@ async function videoData(key, vidIds, parts) {
 function last12Stats(stats) {
     let i = 0
     let last12Vids = [];
-    stats.sort((a, b) => a - b.views);
+    stats.sort((a, b) => a - b.date);
     for(let key = 0; last12Vids.length < 12; key++){
         if (stats[key].length.includes('M')) {
             last12Vids[i] = stats[key];
             i++;
         } 
     }
-    console.log(last12Vids);       
+    last12Vids.sort((a, b) => a.views - b.views);    
     last12Vids.shift();
     last12Vids.pop();
     let avgViews = last12Vids.reduce((a, b) => a + b.views, 0) / last12Vids.length;
     let avgLikes = last12Vids.reduce((a, b) => a + b.likes, 0) / last12Vids.length;
     let avgComments = last12Vids.reduce((a, b) => a + b.comments, 0) / last12Vids.length;
-    console.log(avgViews);
-    console.log(avgLikes);
-    console.log(avgComments);
+    return {
+        'averageViews' : avgViews,
+        'averageLikes' : avgLikes,
+        'averageComments' : avgComments
+    }
 }
