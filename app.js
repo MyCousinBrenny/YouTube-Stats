@@ -3,12 +3,14 @@ var vidTest = 'Gkr8pipJzXA';
 var parts = ['statistics', 'snippet', 'contentDetails'];
 var itemArray = [];
 
+//Add conditional start to parse by channel username or vid Id
 //Main app function in IIFE below - Functions broken out seperately for potential future uses
 (async function () {
     let chanId = await channelId(apiKey, vidTest);
     let uploadPlaylist = "UU" + chanId.substring(2);
     let vids = await channelData(apiKey, uploadPlaylist);
     let vidsData = await videoData(apiKey, vids, parts);
+    
     console.log(last12Stats(vidsData));
 })();
 
@@ -31,7 +33,7 @@ async function channelData(key, playlistId) {
     let response = await fetch(urlString);
     if (!response.ok) {
         throw new Error(await response.text());
-}
+    }
     let channelVids = await response.json();
     for(var key in channelVids.items) {
         itemArray[key] = channelVids.items[key].contentDetails.videoId;
