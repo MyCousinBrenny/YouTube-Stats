@@ -8,10 +8,11 @@ var itemArray = [];
 (async function () {
     let chanId = await channelId(apiKey, vidTest);
     let uploadPlaylist = "UU" + chanId.substring(2);
-    let vids = await channelData(apiKey, uploadPlaylist);
-    let vidsData = await videoData(apiKey, vids, parts);
+    var vids = await channelData(apiKey, uploadPlaylist);
+    let vidsData = await videoData(apiKey, vids.itemArray, parts);
     
-    console.log(last12Stats(vidsData));
+    //console.log(last12Stats(vidsData));
+    console.log(last90Days(vidsData));
 })();
 
 async function channelId(key, vidId) {
@@ -29,7 +30,7 @@ async function channelId(key, vidId) {
 async function channelData(key, playlistId) {
     let urlString =
         "https://www.googleapis.com/youtube/v3/playlistItems" +
-        `?key=${key}&playlistId=${playlistId}&part=contentDetails&maxResults=50`;
+        `?key=${key}&playlistId=${playlistId}&part=contentDetails&maxResults=15`;
     let response = await fetch(urlString);
     if (!response.ok) {
         throw new Error(await response.text());
@@ -38,7 +39,9 @@ async function channelData(key, playlistId) {
     for(var key in channelVids.items) {
         itemArray[key] = channelVids.items[key].contentDetails.videoId;
     }
-    return itemArray;
+    let nextPage = channelVids.nextPageToken;
+    return {'itemArray' : itemArray, 
+        'nextPage' : nextPage};
 }
 
 async function videoData(key, vidIds, parts) {
@@ -92,20 +95,22 @@ function last12Stats(stats) {
 //Last 12 Stats calc removes the videos with the hightest and lowest views, then calc the average views, likes, and comments for the middle 10 videos
 function last90Days(stats) {
     let i = 0
-    let last12Vids = [];
+    let last90Vids = [];
+    let minDate = new Date();
+    minDate.setDate(minDate.getDate() - 15);
+    console.log(minDate);
     stats.sort((a, b) => a.date - b.date);
-    for(let key in last12Vids){
-        if (stats[key].length.includes('M')) {
-            last12Vids[i] = stats[key];
+    for(let key in last90Vids){
+        if (stats[key].length.includes('M') && stats[key].date <= minDate) {
+            last90Vids[i] = stats[key];
+          
             i++;
         } 
     }
-    last12Vids.sort((a, b) => a.views - b.views);    
-    last12Vids.shift();
-    last12Vids.pop();
-    let avgViews = last12Vids.reduce((a, b) => a + b.views, 0) / last12Vids.length;
-    let avgLikes = last12Vids.reduce((a, b) => a + b.likes, 0) / last12Vids.length;
-    let avgComments = last12Vids.reduce((a, b) => a + b.comments, 0) / last12Vids.length;
+    console.log(last90Vids);   
+    let avgViews = last90Vids.reduce((a, b) => a + b.views, 0) / last90Vids.length;
+    let avgLikes = last90Vids.reduce((a, b) => a + b.likes, 0) / last90Vids.length;
+    let avgComments = last90Vids.reduce((a, b) => a + b.comments, 0) / last90Vids.length;
     return {
         'averageViews' : avgViews,
         'averageLikes' : avgLikes,
