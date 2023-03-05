@@ -77,7 +77,7 @@ function last12Stats(stats) {
         if (stats[key].length.includes('M')) {
             last12Vids[i] = stats[key];
             i++;
-        } 
+        }
     }
     last12Vids.sort((a, b) => a.views - b.views);    
     last12Vids.shift();
@@ -101,9 +101,8 @@ function last90Days(stats) {
     console.log(minDate);
     stats.sort((a, b) => a.date - b.date);
     for(let key in last90Vids){
-        if (stats[key].length.includes('M') && stats[key].date <= minDate) {
+        if (stats[key].length.includes('M') /*&& stats[key].date <= minDate*/) {
             last90Vids[i] = stats[key];
-          
             i++;
         } 
     }
