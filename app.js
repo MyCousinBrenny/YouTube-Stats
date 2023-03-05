@@ -69,8 +69,32 @@ async function videoData(key, vidIds, parts) {
 function last12Stats(stats) {
     let i = 0
     let last12Vids = [];
-    stats.sort((a, b) => a - b.date);
+    stats.sort((a, b) => a.date - b.date);
     for(let key = 0; last12Vids.length < 12; key++){
+        if (stats[key].length.includes('M')) {
+            last12Vids[i] = stats[key];
+            i++;
+        } 
+    }
+    last12Vids.sort((a, b) => a.views - b.views);    
+    last12Vids.shift();
+    last12Vids.pop();
+    let avgViews = last12Vids.reduce((a, b) => a + b.views, 0) / last12Vids.length;
+    let avgLikes = last12Vids.reduce((a, b) => a + b.likes, 0) / last12Vids.length;
+    let avgComments = last12Vids.reduce((a, b) => a + b.comments, 0) / last12Vids.length;
+    return {
+        'averageViews' : avgViews,
+        'averageLikes' : avgLikes,
+        'averageComments' : avgComments
+    }
+}
+
+//Last 12 Stats calc removes the videos with the hightest and lowest views, then calc the average views, likes, and comments for the middle 10 videos
+function last90Days(stats) {
+    let i = 0
+    let last12Vids = [];
+    stats.sort((a, b) => a.date - b.date);
+    for(let key in last12Vids){
         if (stats[key].length.includes('M')) {
             last12Vids[i] = stats[key];
             i++;
