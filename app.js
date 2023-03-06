@@ -8,11 +8,11 @@ var itemArray = [];
 (async function () {
     let chanId = await channelId(apiKey, vidTest);
     let uploadPlaylist = "UU" + chanId.substring(2);
-    var vids = await channelData(apiKey, uploadPlaylist);
+    var vids = await channelData(apiKey, uploadPlaylist, "");
     let vidsData = await videoData(apiKey, vids.itemArray, parts);
-    
-    console.log(last12Stats(vidsData));
-    console.log(last90Days(vidsData));
+    console.log(vids.nextPage);
+    //console.log(last12Stats(vidsData));
+    //console.log(last90Days(vidsData));
 })();
 
 async function channelId(key, vidId) {
@@ -27,10 +27,10 @@ async function channelId(key, vidId) {
     return(chanData.items[0].snippet.channelId);
 }
 
-async function channelData(key, playlistId) {
+async function channelData(key, playlistId, tokenId) {
     let urlString =
         "https://www.googleapis.com/youtube/v3/playlistItems" +
-        `?key=${key}&playlistId=${playlistId}&part=contentDetails&maxResults=50`;
+        `?key=${key}&playlistId=${playlistId}&part=contentDetails&maxResults=50&pageToken=${tokenId}`;
     let response = await fetch(urlString);
     if (!response.ok) {
         throw new Error(await response.text());
@@ -65,6 +65,13 @@ async function videoData(key, vidIds, parts) {
             length: vidsData.items[key].contentDetails.duration
             }     
     };
+    if (new Date(Math.min(...itemArray.map(vidDates =>
+        new Date(vidDates.date)))) >= new Date((new Date().setDate(new Date().getDate() - 90)))) {
+            console.log("yes");
+        }
+    console.log(new Date(Math.min(...itemArray.map(vidDates =>
+        new Date(vidDates.date)))));
+    console.log(new Date((new Date().setDate(new Date().getDate() - 90))));
     return(itemArray);
 }
 
@@ -92,7 +99,7 @@ function last12Stats(stats) {
     }
 }
 
-//Last 12 Stats calc removes the videos with the hightest and lowest views, then calc the average views, likes, and comments for the middle 10 videos
+//Last 90 Dayss calcs the average views, likes, and comments for vids 15 to 90 days old. Next step is to remove any outliers 
 function last90Days(stats) {
     let i = 0
     let last90Vids = [];
@@ -100,8 +107,8 @@ function last90Days(stats) {
     let maxDate = new Date();
     minDate.setDate(minDate.getDate() - 15);
     maxDate.setDate(maxDate.getDate() - 90);
-    console.log(minDate);
-    console.log(maxDate);
+    //console.log(minDate);
+    //console.log(maxDate);
     stats.sort((a, b) => a.date - b.date);
     for(let key in stats){
         if (stats[key].length.includes('M') && new Date(stats[key].date) <= minDate && new Date(stats[key].date) >= maxDate) {
@@ -109,8 +116,8 @@ function last90Days(stats) {
             i++;
         } 
     } 
-    console.log(last90Vids);
-    console.log(last90Vids.length);
+    //console.log(last90Vids);
+    //console.log(last90Vids.length);
     let avgViews = last90Vids.reduce((a, b) => a + b.views, 0) / last90Vids.length;
     let avgLikes = last90Vids.reduce((a, b) => a + b.likes, 0) / last90Vids.length;
     let avgComments = last90Vids.reduce((a, b) => a + b.comments, 0) / last90Vids.length;
