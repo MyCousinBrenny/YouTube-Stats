@@ -11,7 +11,7 @@ var itemArray = [];
     var vids = await channelData(apiKey, uploadPlaylist);
     let vidsData = await videoData(apiKey, vids.itemArray, parts);
     
-    //console.log(last12Stats(vidsData));
+    console.log(last12Stats(vidsData));
     console.log(last90Days(vidsData));
 })();
 
@@ -30,7 +30,7 @@ async function channelId(key, vidId) {
 async function channelData(key, playlistId) {
     let urlString =
         "https://www.googleapis.com/youtube/v3/playlistItems" +
-        `?key=${key}&playlistId=${playlistId}&part=contentDetails&maxResults=15`;
+        `?key=${key}&playlistId=${playlistId}&part=contentDetails&maxResults=50`;
     let response = await fetch(urlString);
     if (!response.ok) {
         throw new Error(await response.text());
@@ -97,16 +97,18 @@ function last90Days(stats) {
     let i = 0
     let last90Vids = [];
     let minDate = new Date();
+    let maxDate = new Date();
     minDate.setDate(minDate.getDate() - 15);
+    maxDate.setDate(maxDate.getDate() - 90);
     console.log(minDate);
+    console.log(maxDate);
     stats.sort((a, b) => a.date - b.date);
-    for(let key in last90Vids){
-        if (stats[key].length.includes('M') /*&& stats[key].date <= minDate*/) {
+    for(let key in stats){
+        if (stats[key].length.includes('M') && new Date(stats[key].date).getDate() <= minDate && maxDate >= new Date(stats[key].date).getDate()) {
             last90Vids[i] = stats[key];
             i++;
         } 
-    }
-    console.log(last90Vids);   
+    } 
     let avgViews = last90Vids.reduce((a, b) => a + b.views, 0) / last90Vids.length;
     let avgLikes = last90Vids.reduce((a, b) => a + b.likes, 0) / last90Vids.length;
     let avgComments = last90Vids.reduce((a, b) => a + b.comments, 0) / last90Vids.length;
