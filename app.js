@@ -2,15 +2,20 @@ var apiKey = require('./key.js');
 var vidTest = 'Gkr8pipJzXA';
 var parts = ['statistics', 'snippet', 'contentDetails'];
 var itemArray = [];
+var nextToken = 'EAAaBlBUOkNESQ';
 
 //Add conditional start to parse by channel username or vid Id
 //Main app function in IIFE below - Functions broken out seperately for potential future uses
 (async function () {
     let chanId = await channelId(apiKey, vidTest);
     let uploadPlaylist = "UU" + chanId.substring(2);
-    var vids = await channelData(apiKey, uploadPlaylist, "");
-    let vidsData = await videoData(apiKey, vids.itemArray, parts);
-    console.log(vids.nextPage);
+    do {
+        var vids = await channelData(apiKey, uploadPlaylist, nextToken);
+        nextToken = vids.nextPage;
+        let vidsData = await videoData(apiKey, vids.itemArray, parts);
+    } while (new Date(Math.min(...itemArray.map(vidDates =>
+        new Date(vidDates.date)))) >= new Date((new Date().setDate(new Date().getDate() - 280))));
+    //console.log(vidsData.length);
     //console.log(last12Stats(vidsData));
     //console.log(last90Days(vidsData));
 })();
@@ -28,6 +33,7 @@ async function channelId(key, vidId) {
 }
 
 async function channelData(key, playlistId, tokenId) {
+    console.log(tokenId);
     let urlString =
         "https://www.googleapis.com/youtube/v3/playlistItems" +
         `?key=${key}&playlistId=${playlistId}&part=contentDetails&maxResults=50&pageToken=${tokenId}`;
@@ -37,7 +43,7 @@ async function channelData(key, playlistId, tokenId) {
     }
     let channelVids = await response.json();
     for(var key in channelVids.items) {
-        itemArray[key] = channelVids.items[key].contentDetails.videoId;
+        itemArray.push(channelVids.items[key].contentDetails.videoId);
     }
     let nextPage = channelVids.nextPageToken;
     return {'itemArray' : itemArray, 
@@ -45,9 +51,11 @@ async function channelData(key, playlistId, tokenId) {
 }
 
 async function videoData(key, vidIds, parts) {
+    console.log(vidIds);
     let urlString =
         "https://www.googleapis.com/youtube/v3/videos" +
         `?key=${key}&id=${vidIds.join()}&part=${parts.join()}`;
+    console.log(urlString);
     let response = await fetch(urlString);
     if (!response.ok) {
         throw new Error(await response.text());
@@ -65,13 +73,7 @@ async function videoData(key, vidIds, parts) {
             length: vidsData.items[key].contentDetails.duration
             }     
     };
-    if (new Date(Math.min(...itemArray.map(vidDates =>
-        new Date(vidDates.date)))) >= new Date((new Date().setDate(new Date().getDate() - 90)))) {
-            console.log("yes");
-        }
-    console.log(new Date(Math.min(...itemArray.map(vidDates =>
-        new Date(vidDates.date)))));
-    console.log(new Date((new Date().setDate(new Date().getDate() - 90))));
+
     return(itemArray);
 }
 
