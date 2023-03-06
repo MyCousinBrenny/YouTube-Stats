@@ -104,11 +104,13 @@ function last90Days(stats) {
     console.log(maxDate);
     stats.sort((a, b) => a.date - b.date);
     for(let key in stats){
-        if (stats[key].length.includes('M') && new Date(stats[key].date).getDate() <= minDate && maxDate >= new Date(stats[key].date).getDate()) {
+        if (stats[key].length.includes('M') && new Date(stats[key].date) <= minDate && new Date(stats[key].date) >= maxDate) {
             last90Vids[i] = stats[key];
             i++;
         } 
     } 
+    console.log(last90Vids);
+    console.log(last90Vids.length);
     let avgViews = last90Vids.reduce((a, b) => a + b.views, 0) / last90Vids.length;
     let avgLikes = last90Vids.reduce((a, b) => a + b.likes, 0) / last90Vids.length;
     let avgComments = last90Vids.reduce((a, b) => a + b.comments, 0) / last90Vids.length;
