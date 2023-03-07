@@ -18,8 +18,14 @@ var nextToken = '';
     } while (new Date(Math.min(...videoStats.map(vidDates =>
         new Date(vidDates.date)))) >= new Date((new Date().setDate(new Date().getDate() - 90))));
 
-    console.log(last12Stats(vidsData));
-    console.log(last90Days(vidsData));
+    let l12Calc = last12Stats(vidsData).mao;
+    console.log(l12Calc);
+
+    while (l12Calc.length) {
+        let workingSet = l12Calc.splice(0, 2);
+    }
+
+    //console.log(last90Days(vidsData));
 })();
 
 async function channelId(key, vidId) {
@@ -99,12 +105,9 @@ function last12Stats(stats) {
     let avgViews = last12Vids.reduce((a, b) => a + b.views, 0) / last12Vids.length;
     let avgLikes = last12Vids.reduce((a, b) => a + b.likes, 0) / last12Vids.length;
     let avgComments = last12Vids.reduce((a, b) => a + b.comments, 0) / last12Vids.length;
-
-    return {
-        'averageViews' : avgViews,
-        'averageLikes' : avgLikes,
-        'averageComments' : avgComments
-    }
+    let result =[avgViews, avgLikes, avgComments];
+    
+    return result;
 }
 
 //Last 90 Dayss calcs the average views, likes, and comments for vids 15 to 90 days old. Next step is to remove any outliers 
