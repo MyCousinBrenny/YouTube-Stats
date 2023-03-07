@@ -12,7 +12,7 @@ var nextToken = 'EAAaBlBUOkNESQ';
     do {
         var vids = await channelData(apiKey, uploadPlaylist, nextToken);
         nextToken = vids.nextPage;
-        let vidsData = await videoData(apiKey, vids.itemArray, parts);
+        let vidsData = await videoData(apiKey, vids.videoStats, parts);
     } while (new Date(Math.min(...itemArray.map(vidDates =>
         new Date(vidDates.date)))) >= new Date((new Date().setDate(new Date().getDate() - 280))));
     //console.log(vidsData.length);
@@ -62,7 +62,7 @@ async function videoData(key, vidIds, parts) {
     }
     let vidsData = await response.json();
     for(let key in vidsData.items) {
-        itemArray[key] = {
+        videoStats[key] = {
             number: key,
             key: vidsData.items[key].id,
             title: vidsData.items[key].snippet.title,
@@ -74,7 +74,7 @@ async function videoData(key, vidIds, parts) {
             }     
     };
 
-    return(itemArray);
+    return(videoStats);
 }
 
 //Last 12 Stats calc removes the videos with the hightest and lowest views, then calc the average views, likes, and comments for the middle 10 videos
