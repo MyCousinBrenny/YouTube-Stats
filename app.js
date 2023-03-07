@@ -3,21 +3,22 @@ var vidTest = 'Gkr8pipJzXA';
 var parts = ['statistics', 'snippet', 'contentDetails'];
 var itemArray = [];
 var videoStats = [];
-var nextToken = 'EAAaBlBUOkNESQ';
+var nextToken = '';
 
 //Add conditional start to parse by channel username or vid Id
 //Main app function in IIFE below - Functions broken out seperately for potential future uses
 (async function () {
     let chanId = await channelId(apiKey, vidTest);
     let uploadPlaylist = "UU" + chanId.substring(2);
+
     do {
         var vids = await channelData(apiKey, uploadPlaylist, nextToken);
         nextToken = vids.nextPage;
         console.log(nextToken);
         var vidsData = await videoData(apiKey, vids.itemArray, parts);
     } while (new Date(Math.min(...videoStats.map(vidDates =>
-        new Date(vidDates.date)))) >= new Date((new Date().setDate(new Date().getDate() - 180))));
-    console.log(vidsData);
+        new Date(vidDates.date)))) >= new Date((new Date().setDate(new Date().getDate() - 90))));
+        
     //console.log(last12Stats(vidsData));
     //console.log(last90Days(vidsData));
 })();
@@ -31,6 +32,7 @@ async function channelId(key, vidId) {
         throw new Error(await response.text());
     }
     let chanData = await response.json();
+
     return(chanData.items[0].snippet.channelId);
 }
 
@@ -47,6 +49,7 @@ async function channelData(key, playlistId, tokenId) {
         itemArray[key] = channelVids.items[key].contentDetails.videoId;
     }
     let nextPage = channelVids.nextPageToken;
+
     return {'itemArray' : itemArray, 
         'nextPage' : nextPage};
 }
@@ -60,11 +63,10 @@ async function videoData(key, vidIds, parts) {
         throw new Error(await response.text());
     }
     let vidsData = await response.json();
-    let keyNumber = -1;
-    console.log(videoStats.length);
+    let keyNumber = 0;
     for(let key in vidsData.items) {
         if(videoStats.length > 0) {
-            keyNumber = vidsData.length;
+            keyNumber = videoStats.length;
         } 
         videoStats.push({
             number: keyNumber,
