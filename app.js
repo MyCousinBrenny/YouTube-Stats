@@ -14,13 +14,12 @@ var nextToken = '';
     do {
         var vids = await channelData(apiKey, uploadPlaylist, nextToken);
         nextToken = vids.nextPage;
-        console.log(nextToken);
         var vidsData = await videoData(apiKey, vids.itemArray, parts);
     } while (new Date(Math.min(...videoStats.map(vidDates =>
         new Date(vidDates.date)))) >= new Date((new Date().setDate(new Date().getDate() - 90))));
-        
-    //console.log(last12Stats(vidsData));
-    //console.log(last90Days(vidsData));
+
+    console.log(last12Stats(vidsData));
+    console.log(last90Days(vidsData));
 })();
 
 async function channelId(key, vidId) {
@@ -100,6 +99,7 @@ function last12Stats(stats) {
     let avgViews = last12Vids.reduce((a, b) => a + b.views, 0) / last12Vids.length;
     let avgLikes = last12Vids.reduce((a, b) => a + b.likes, 0) / last12Vids.length;
     let avgComments = last12Vids.reduce((a, b) => a + b.comments, 0) / last12Vids.length;
+
     return {
         'averageViews' : avgViews,
         'averageLikes' : avgLikes,
@@ -115,8 +115,6 @@ function last90Days(stats) {
     let maxDate = new Date();
     minDate.setDate(minDate.getDate() - 15);
     maxDate.setDate(maxDate.getDate() - 90);
-    //console.log(minDate);
-    //console.log(maxDate);
     stats.sort((a, b) => a.date - b.date);
     for(let key in stats){
         if (stats[key].length.includes('M') && new Date(stats[key].date) <= minDate && new Date(stats[key].date) >= maxDate) {
@@ -124,11 +122,10 @@ function last90Days(stats) {
             i++;
         } 
     } 
-    //console.log(last90Vids);
-    //console.log(last90Vids.length);
     let avgViews = last90Vids.reduce((a, b) => a + b.views, 0) / last90Vids.length;
     let avgLikes = last90Vids.reduce((a, b) => a + b.likes, 0) / last90Vids.length;
     let avgComments = last90Vids.reduce((a, b) => a + b.comments, 0) / last90Vids.length;
+
     return {
         'averageViews' : avgViews,
         'averageLikes' : avgLikes,
