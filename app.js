@@ -1,17 +1,16 @@
-var apiKey = require('./key.js');
+var apiKey = require('./key.js').apiKey;
 var vidTest = 'Gkr8pipJzXA';
 var parts = ['statistics', 'snippet', 'contentDetails'];
 var itemArray = [];
 var videoStats = [];
 var nextToken = '';
-var channelLinks = require('./key.js');
+var channelLinks = require('./key.js').channelLinks;
 
 //Add conditional start to parse by channel username or vid Id
 //Main app function in IIFE below - Functions broken out seperately for potential future uses
 (async function () {
-    for (let channel in channelLinks){
-        console.log(channelLinks[channel]);
-    }
+    
+        console.log(channelLinks);
         let chanId = await channelId(apiKey, vidTest);
         let uploadPlaylist = "UU" + chanId.substring(2);
 
