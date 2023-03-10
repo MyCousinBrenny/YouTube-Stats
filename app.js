@@ -9,7 +9,8 @@ var channelLinks = require('./key.js').channelLinks;
 //Add conditional start to parse by channel username or vid Id
 //Main app function in IIFE below - Functions broken out seperately for potential future uses
 (async function () {
-    
+    //for(let channel in channelLinks){
+      //  if (parseId(channelLinks[channel]))
         console.log(channelLinks);
         let chanId = await channelId(apiKey, vidTest);
         let uploadPlaylist = "UU" + chanId.substring(2);
@@ -137,5 +138,5 @@ function parseId(url) {
     var regExp = /^.*((youtu.be\/)|(v\/)|(c\/)|(channel\/)|(@)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?^\/]*).*/;
     var match = url.match(regExp);
 
-    return (match&&match[10].length>=0)? match[10] : false;
+    return [(match&&match[10].length>=0)? match[10] : false, match[5]];
 }
