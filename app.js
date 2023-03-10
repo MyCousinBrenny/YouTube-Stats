@@ -4,22 +4,26 @@ var parts = ['statistics', 'snippet', 'contentDetails'];
 var itemArray = [];
 var videoStats = [];
 var nextToken = '';
+var channelLinks = require('./key.js');
 
 //Add conditional start to parse by channel username or vid Id
 //Main app function in IIFE below - Functions broken out seperately for potential future uses
 (async function () {
-    let chanId = await channelId(apiKey, vidTest);
-    let uploadPlaylist = "UU" + chanId.substring(2);
+    for (let channel in channelLinks){
+        console.log(channelLinks[channel]);
+    }
+        let chanId = await channelId(apiKey, vidTest);
+        let uploadPlaylist = "UU" + chanId.substring(2);
 
-    do {
-        var vids = await channelData(apiKey, uploadPlaylist, nextToken);
-        nextToken = vids.nextPage;
-        var vidsData = await videoData(apiKey, vids.itemArray, parts);
-    } while (new Date(Math.min(...videoStats.map(vidDates =>
-        new Date(vidDates.date)))) >= new Date((new Date().setDate(new Date().getDate() - 90))));
-    
-    console.log(last12Stats(vidsData));    
-    console.log(last90Days(vidsData));
+        do {
+            var vids = await channelData(apiKey, uploadPlaylist, nextToken);
+            nextToken = vids.nextPage;
+            var vidsData = await videoData(apiKey, vids.itemArray, parts);
+        } while (new Date(Math.min(...videoStats.map(vidDates =>
+            new Date(vidDates.date)))) >= new Date((new Date().setDate(new Date().getDate() - 90))));
+        
+        console.log(last12Stats(vidsData));    
+        console.log(last90Days(vidsData));
 })();
 
 async function channelId(key, vidId) {
