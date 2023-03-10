@@ -5,12 +5,35 @@ var itemArray = [];
 var videoStats = [];
 var nextToken = '';
 
+//AirTable specific script below
+var table = base.getTable("Channels");
+var channelField = table.getField("Channel Link");
+var channelArray = [];
+var query = await table.selectRecordsAsync({fields: [channelField.id]});
+
+let bareItems = query.records
+    .map((record) => ({
+        record: record,
+        channelId: parseId(record.getCellValueAsString(channelField.id)),
+    }))
+    .filter((item) => item.channelId);
+
+console.log(bareItems);
+
+for (let key in bareItems){
+    try {
+        channelArray.push(bareItems[key].channelId);
+    }
+    catch {
+    }
+}
+
+
 //Add conditional start to parse by channel username or vid Id
 //Main app function in IIFE below - Functions broken out seperately for potential future uses
 (async function () {
     let chanId = await channelId(apiKey, vidTest);
     let uploadPlaylist = "UU" + chanId.substring(2);
-
     do {
         var vids = await channelData(apiKey, uploadPlaylist, nextToken);
         nextToken = vids.nextPage;
