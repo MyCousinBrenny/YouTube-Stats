@@ -129,3 +129,10 @@ function last90Days(stats) {
         'averageComments' : avgComments
     }
 }
+
+function parseId(url) {
+    var regExp = /^.*((youtu.be\/)|(v\/)|(c\/)|(channel\/)|(@)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?^\/]*).*/;
+    var match = url.match(regExp);
+
+    return (match&&match[10].length>=0)? match[10] : false;
+}
