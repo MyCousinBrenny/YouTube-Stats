@@ -3,7 +3,7 @@ var vidTest = 'Gkr8pipJzXA';
 var parts = ['statistics', 'snippet', 'contentDetails'];
 var itemArray = [];
 var videoStats = [];
-var nextToken = '';
+//var nextToken = '';
 var channelLinks = require('./key.js').channelLinks;
 
 //Add conditional start to parse by channel username or vid Id
@@ -13,11 +13,11 @@ var channelLinks = require('./key.js').channelLinks;
         if ((parseId(channelLinks[channel], 6)) == 'channel/') {
             var chanId = parseId(channelLinks[channel], 10);            
         } else {
-        console.log(parseId(channelLinks[channel], 10));
-        var chanId = await channelId(apiKey, parseId(channelLinks[channel], 10));
-        console.log(chanId);
-        var uploadPlaylist = "UU" + chanId.substring(2);
+            var chanId = await channelId(apiKey, parseId(channelLinks[channel], 10));
         }
+        console.log(parseId(channelLinks[channel], 10));
+        var uploadPlaylist = "UU" + chanId.substring(2);
+        var nextToken = '';
         do {
             var vids = await channelData(apiKey, uploadPlaylist, nextToken);
             nextToken = vids.nextPage;
@@ -30,6 +30,7 @@ var channelLinks = require('./key.js').channelLinks;
         console.log(last90Days(vidsData));
 }})();
 
+//Pivoted app to calc from channel name serach.  Will use below function for chrome extension when on video page.
 async function channelIdFromVid(key, vidId) {
     let urlString =
         "https://www.googleapis.com/youtube/v3/videos" +
@@ -43,7 +44,7 @@ async function channelIdFromVid(key, vidId) {
     return(chanData.items[0].snippet.channelId);
 }
 
-async function channelId(key, vidId) {
+async function channelId(key, chanName) {
     let urlString =
         "https://www.googleapis.com/youtube/v3/search" +
         `?key=${key}&q=${chanName}&part=snippet`;
