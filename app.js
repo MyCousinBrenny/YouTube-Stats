@@ -9,12 +9,15 @@ var channelLinks = require('./key.js').channelLinks;
 //Add conditional start to parse by channel username or vid Id
 //Main app function in IIFE below - Functions broken out seperately for potential future uses
 (async function () {
-    //for(let channel in channelLinks){
-      //  if (parseId(channelLinks[channel]))
-        console.log(channelLinks);
-        let chanId = await channelId(apiKey, vidTest);
-        let uploadPlaylist = "UU" + chanId.substring(2);
-
+    for(let channel in channelLinks){
+        if ((parseId(channelLinks[channel], 6)) == 'channel/') {
+            var chanId = parseId(channelLinks[channel], 10);            
+        } else {
+        console.log(parseId(channelLinks[channel], 10));
+        var chanId = await channelId(apiKey, parseId(channelLinks[channel], 10));
+        console.log(chanId);
+        var uploadPlaylist = "UU" + chanId.substring(2);
+        }
         do {
             var vids = await channelData(apiKey, uploadPlaylist, nextToken);
             nextToken = vids.nextPage;
@@ -22,14 +25,28 @@ var channelLinks = require('./key.js').channelLinks;
         } while (new Date(Math.min(...videoStats.map(vidDates =>
             new Date(vidDates.date)))) >= new Date((new Date().setDate(new Date().getDate() - 90))));
         
+        console.log(chanId);
         console.log(last12Stats(vidsData));    
         console.log(last90Days(vidsData));
-})();
+}})();
 
-async function channelId(key, vidId) {
+async function channelIdFromVid(key, vidId) {
     let urlString =
         "https://www.googleapis.com/youtube/v3/videos" +
         `?key=${key}&id=${vidId}&part=snippet`;
+    let response = await fetch(urlString);
+    if (!response.ok) {
+        throw new Error(await response.text());
+    }
+    let chanData = await response.json();
+
+    return(chanData.items[0].snippet.channelId);
+}
+
+async function channelId(key, vidId) {
+    let urlString =
+        "https://www.googleapis.com/youtube/v3/search" +
+        `?key=${key}&q=${chanName}&part=snippet`;
     let response = await fetch(urlString);
     if (!response.ok) {
         throw new Error(await response.text());
@@ -134,9 +151,9 @@ function last90Days(stats) {
     }
 }
 
-function parseId(url) {
+function parseId(url, group) {
     var regExp = /^.*((youtu.be\/)|(v\/)|(c\/)|(channel\/)|(@)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?^\/]*).*/;
     var match = url.match(regExp);
-
-    return [(match&&match[10].length>=0)? match[10] : false, match[5]];
+    
+    return (match&&match[group])? match[group] : false;
 }
