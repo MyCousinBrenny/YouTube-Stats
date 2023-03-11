@@ -3,7 +3,6 @@ var vidTest = 'Gkr8pipJzXA';
 var parts = ['statistics', 'snippet', 'contentDetails'];
 var itemArray = [];
 var videoStats = [];
-//var nextToken = '';
 var channelLinks = require('./key.js').channelLinks;
 
 //Add conditional start to parse by channel username or vid Id
