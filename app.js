@@ -9,7 +9,10 @@ var channelLinks = require('./key.js').channelLinks;
 //Main app function in IIFE below - Functions broken out seperately for potential future uses
 (async function () {
     for(let channel in channelLinks){
-        var videoStats = [];
+        var vidsData = [];
+        console.log(vidsData);
+        console.log(channelLinks[channel]);
+        
         if ((parseId(channelLinks[channel], 5)) == 'channel/') {
             var chanId = parseId(channelLinks[channel], 10);        
         } else {
@@ -18,7 +21,6 @@ var channelLinks = require('./key.js').channelLinks;
         console.log(parseId(channelLinks[channel], 10));
         var uploadPlaylist = "UU" + chanId.substring(2);
         var nextToken = '';
-        
         do {
             var vids = await channelData(apiKey, uploadPlaylist, nextToken);
             nextToken = vids.nextPage;
@@ -27,9 +29,9 @@ var channelLinks = require('./key.js').channelLinks;
             new Date(vidDates.date)))) >= new Date((new Date().setDate(new Date().getDate() - 90))));
         //solve for all vids from all channels going into 1 array
         console.log(chanId);
-        console.log(videoStats.length);
-        console.log(last12Stats(vidsData));    
-        console.log(last90Days(vidsData));
+        console.log(vidsData);
+        //console.log(last12Stats(vidsData));    
+        //console.log(last90Days(vidsData));
 }})();
 
 //Pivoted app to calc from channel name serach.  Will use below function for chrome extension when on video page.
@@ -62,7 +64,7 @@ async function channelId(key, chanName) {
 async function channelData(key, playlistId, tokenId) {
     let urlString =
         "https://www.googleapis.com/youtube/v3/playlistItems" +
-        `?key=${key}&playlistId=${playlistId}&part=contentDetails&maxResults=50&pageToken=${tokenId}`;
+        `?key=${key}&playlistId=${playlistId}&part=contentDetails&maxResults=5&pageToken=${tokenId}`;
     let response = await fetch(urlString);
     if (!response.ok) {
         throw new Error(await response.text());
