@@ -10,11 +10,9 @@ var channelLinks = require('./key.js').channelLinks;
 (async function () {
     for(let channel in channelLinks){
         if ((parseId(channelLinks[channel], 5)) == 'channel/') {
-            var chanId = parseId(channelLinks[channel], 10);
-            console.log('Also Yes');           
+            var chanId = parseId(channelLinks[channel], 10);        
         } else {
             var chanId = await channelId(apiKey, parseId(channelLinks[channel], 10));
-            console.log('Yes');
         }
         console.log(parseId(channelLinks[channel], 10));
         var uploadPlaylist = "UU" + chanId.substring(2);
