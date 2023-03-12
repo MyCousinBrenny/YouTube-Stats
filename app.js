@@ -9,6 +9,7 @@ var channelLinks = require('./key.js').channelLinks;
 //Main app function in IIFE below - Functions broken out seperately for potential future uses
 (async function () {
     for(let channel in channelLinks){
+        var videoStats = [];
         if ((parseId(channelLinks[channel], 5)) == 'channel/') {
             var chanId = parseId(channelLinks[channel], 10);        
         } else {
@@ -17,14 +18,16 @@ var channelLinks = require('./key.js').channelLinks;
         console.log(parseId(channelLinks[channel], 10));
         var uploadPlaylist = "UU" + chanId.substring(2);
         var nextToken = '';
+        
         do {
             var vids = await channelData(apiKey, uploadPlaylist, nextToken);
             nextToken = vids.nextPage;
             var vidsData = await videoData(apiKey, vids.itemArray, parts);
         } while (new Date(Math.min(...videoStats.map(vidDates =>
             new Date(vidDates.date)))) >= new Date((new Date().setDate(new Date().getDate() - 90))));
-        
+        //solve for all vids from all channels going into 1 array
         console.log(chanId);
+        console.log(videoStats.length);
         console.log(last12Stats(vidsData));    
         console.log(last90Days(vidsData));
 }})();
