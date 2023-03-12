@@ -9,10 +9,12 @@ var channelLinks = require('./key.js').channelLinks;
 //Main app function in IIFE below - Functions broken out seperately for potential future uses
 (async function () {
     for(let channel in channelLinks){
-        if ((parseId(channelLinks[channel], 6)) == 'channel/') {
-            var chanId = parseId(channelLinks[channel], 10);            
+        if ((parseId(channelLinks[channel], 5)) == 'channel/') {
+            var chanId = parseId(channelLinks[channel], 10);
+            console.log('Also Yes');           
         } else {
             var chanId = await channelId(apiKey, parseId(channelLinks[channel], 10));
+            console.log('Yes');
         }
         console.log(parseId(channelLinks[channel], 10));
         var uploadPlaylist = "UU" + chanId.substring(2);
