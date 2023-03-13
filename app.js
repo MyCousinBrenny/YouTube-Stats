@@ -9,16 +9,11 @@ var channelLinks = require('./key.js').channelLinks;
 //Main app function in IIFE below - Functions broken out seperately for potential future uses
 (async function () {
     for(let channel in channelLinks){
-        var vidsData = [];
-        console.log(vidsData);
-        console.log(channelLinks[channel]);
-        
         if ((parseId(channelLinks[channel], 5)) == 'channel/') {
             var chanId = parseId(channelLinks[channel], 10);        
         } else {
             var chanId = await channelId(apiKey, parseId(channelLinks[channel], 10));
         }
-        console.log(parseId(channelLinks[channel], 10));
         var uploadPlaylist = "UU" + chanId.substring(2);
         var nextToken = '';
         do {
@@ -27,11 +22,9 @@ var channelLinks = require('./key.js').channelLinks;
             var vidsData = await videoData(apiKey, vids.itemArray, parts);
         } while (new Date(Math.min(...videoStats.map(vidDates =>
             new Date(vidDates.date)))) >= new Date((new Date().setDate(new Date().getDate() - 90))));
-        //solve for all vids from all channels going into 1 array
-        console.log(chanId);
-        console.log(vidsData);
-        //console.log(last12Stats(vidsData));    
-        //console.log(last90Days(vidsData));
+        //console.log(chanId);
+        //console.log(vidsData);
+        console.log([chanId, last12Stats(vidsData), last90Days(vidsData)]);    
 }})();
 
 //Pivoted app to calc from channel name serach.  Will use below function for chrome extension when on video page.
@@ -64,7 +57,7 @@ async function channelId(key, chanName) {
 async function channelData(key, playlistId, tokenId) {
     let urlString =
         "https://www.googleapis.com/youtube/v3/playlistItems" +
-        `?key=${key}&playlistId=${playlistId}&part=contentDetails&maxResults=5&pageToken=${tokenId}`;
+        `?key=${key}&playlistId=${playlistId}&part=contentDetails&maxResults=50&pageToken=${tokenId}`;
     let response = await fetch(urlString);
     if (!response.ok) {
         throw new Error(await response.text());
@@ -80,6 +73,7 @@ async function channelData(key, playlistId, tokenId) {
 }
 
 async function videoData(key, vidIds, parts) {
+    videoStats = [];
     let urlString =
         "https://www.googleapis.com/youtube/v3/videos" +
         `?key=${key}&id=${vidIds.join()}&part=${parts.join()}`;
@@ -125,9 +119,12 @@ function last12Stats(stats) {
     let avgViews = last12Vids.reduce((a, b) => a + b.views, 0) / last12Vids.length;
     let avgLikes = last12Vids.reduce((a, b) => a + b.likes, 0) / last12Vids.length;
     let avgComments = last12Vids.reduce((a, b) => a + b.comments, 0) / last12Vids.length;
-    let result =[avgViews, avgLikes, avgComments];
     
-    return result;
+    return {
+        'averageViews' : avgViews,
+        'averageLikes' : avgLikes,
+        'averageComments' : avgComments
+    }
 }
 
 //Last 90 Dayss calcs the average views, likes, and comments for vids 15 to 90 days old. Next step is to remove any outliers 
