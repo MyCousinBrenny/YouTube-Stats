@@ -8,7 +8,6 @@ var channelLinks = require('./key.js').channelLinks;
 //Add conditional start to parse by channel username or vid Id
 //Main app function in IIFE below - Functions broken out seperately for potential future uses
 (async function () {
-<<<<<<< HEAD
     for(let channel in channelLinks){
         if ((parseId(channelLinks[channel], 5)) == 'channel/') {
             var chanId = parseId(channelLinks[channel], 10);        
@@ -27,14 +26,7 @@ var channelLinks = require('./key.js').channelLinks;
         //console.log(vidsData);
         console.log([chanId, last12Stats(vidsData), last90Days(vidsData)]);    
 }})();
-||||||| parent of 90aa06f (Latest commmit)
-    let chanId = await channelId(apiKey, vidTest);
-    let uploadPlaylist = "UU" + chanId.substring(2);
-=======
-    let chanId = await channelId(apiKey, vidTest);
-    console.log(chanId);
-    let uploadPlaylist = "UU" + chanId.substring(2);
->>>>>>> 90aa06f (Latest commmit)
+
 
 //Pivoted app to calc from channel name serach.  Will use below function for chrome extension when on video page.
 async function channelIdFromVid(key, vidId) {

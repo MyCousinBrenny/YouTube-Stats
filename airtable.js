@@ -1,54 +1,80 @@
 var apiKey = require('./key.js');
-var vidTest = 'Gkr8pipJzXA';
-var parts = ['statistics', 'snippet', 'contentDetails'];
-var itemArray = [];
-var videoStats = [];
-var nextToken = '';
-
-//AirTable specific script below
 var table = base.getTable("Channels");
 var channelField = table.getField("Channel Link");
-var channelArray = [];
+var l12Views = table.getField("Last 12 - Avg Views");
+var l12Likes = table.getField("Last 12 - Avg Likes");
+var l12Comments = table.getField("Last 12 - Avg Comments");
+var l90Views = table.getField("Last 90 Days - Avg Views");
+var l90Likes = table.getField("Last 90 Days - Avg Likes");
+var l90Comments = table.getField("Last 90 Days - Avg Comments");
+var videoStats = [];
+var vidsData = [];
+var parts = ['statistics', 'snippet', 'contentDetails'];
+
+//Grabs urls from AirTable table
 var query = await table.selectRecordsAsync({fields: [channelField.id]});
 
-let bareItems = query.records
+//Parse out the channel name
+var bareItems = query.records
     .map((record) => ({
         record: record,
         channelId: parseId(record.getCellValueAsString(channelField.id)),
     }))
     .filter((item) => item.channelId);
 
-console.log(bareItems);
-
-for (let key in bareItems){
-    try {
-        channelArray.push(bareItems[key].channelId);
-    }
-    catch {
-    }
-}
-
-
-//Add conditional start to parse by channel username or vid Id
-//Main app function in IIFE below - Functions broken out seperately for potential future uses
-(async function () {
-    let chanId = await channelId(apiKey, vidTest);
-    let uploadPlaylist = "UU" + chanId.substring(2);
+//Determine channel id from name, grab videos, and calculate the stats
+for(let channel in bareItems){
+    var chanId;
+    vidsData = [];
+    if (bareItems[channel].channelId[1] == 'channel/') {
+        chanId = bareItems[channel].channelId[0];
+    } else if (bareItems[channel].channelId[1] == false) {
+        continue
+    } else {
+        chanId = await channelId(apiKey, bareItems[channel].channelId[0])
+    };
+    var uploadPlaylist = "UU" + chanId.substring(2);
+    var nextToken = '';
     do {
+        var vidDates = [];
         var vids = await channelData(apiKey, uploadPlaylist, nextToken);
         nextToken = vids.nextPage;
-        var vidsData = await videoData(apiKey, vids.itemArray, parts);
-    } while (new Date(Math.min(...videoStats.map(vidDates =>
-        new Date(vidDates.date)))) >= new Date((new Date().setDate(new Date().getDate() - 90))));
-    
-    console.log(last12Stats(vidsData));    
-    console.log(last90Days(vidsData));
-})();
+        vidsData.push(...await videoData(apiKey, vids.itemArray, parts));
+        for(let dates in vidsData){
+            vidDates.push(new Date(vidsData[dates].date));
+        }
+        var oldestVid = vidDates[vidDates.length-1];
+    } while (oldestVid >= new Date(new Date().setDate(new Date().getDate() - 90)));
 
-async function channelId(key, vidId) {
+    let workingSet = [bareItems[channel].record.id, {last12 : last12Stats(vidsData)}, {last90 : last90Days(vidsData)}];
+    let records = workingSet.map(() => ({
+        id: workingSet[0],
+        fields: {
+            [l12Views.id] : workingSet[1].last12.averageViews,
+            [l12Likes.id] : workingSet[1].last12.averageLikes,
+            [l12Comments.id] : workingSet[1].last12.averageComments,
+            [l90Views.id] : workingSet[2].last90.averageViews,
+            [l90Likes.id] : workingSet[2].last90.averageLikes,
+            [l90Comments.id] : workingSet[2].last90.averageComments
+        }
+    }));    
+    
+    await table.updateRecordsAsync(records);
+}
+
+output.text("Operation complete.");
+
+function parseId(url) {
+    var regExp = /^.*((youtu.be\/)|(v\/)|(.com\/)|(c\/)|(channel\/)|(@)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?^\/]*).*/;
+    var match = url.match(regExp);
+    
+    return [(match&&match[11].length>=0)? match[11] : false, (match&&match[11].length>=0)? match[6] : false];
+}
+
+async function channelId(key, chanName) {
     let urlString =
-        "https://www.googleapis.com/youtube/v3/videos" +
-        `?key=${key}&id=${vidId}&part=snippet`;
+        "https://www.googleapis.com/youtube/v3/search" +
+        `?key=${key}&q=${chanName}&part=snippet`;
     let response = await fetch(urlString);
     if (!response.ok) {
         throw new Error(await response.text());
@@ -67,8 +93,9 @@ async function channelData(key, playlistId, tokenId) {
         throw new Error(await response.text());
     }
     let channelVids = await response.json();
-    for(var key in channelVids.items) {
-        itemArray[key] = channelVids.items[key].contentDetails.videoId;
+    var itemArray = [];
+    for(var vids in channelVids.items) { 
+       itemArray[vids] = channelVids.items[vids].contentDetails.videoId;
     }
     let nextPage = channelVids.nextPageToken;
 
@@ -77,6 +104,7 @@ async function channelData(key, playlistId, tokenId) {
 }
 
 async function videoData(key, vidIds, parts) {
+    videoStats = [];
     let urlString =
         "https://www.googleapis.com/youtube/v3/videos" +
         `?key=${key}&id=${vidIds.join()}&part=${parts.join()}`;
@@ -101,7 +129,6 @@ async function videoData(key, vidIds, parts) {
             length: vidsData.items[key].contentDetails.duration
             })     
     };
-
     return(videoStats);
 }
 
@@ -122,9 +149,12 @@ function last12Stats(stats) {
     let avgViews = last12Vids.reduce((a, b) => a + b.views, 0) / last12Vids.length;
     let avgLikes = last12Vids.reduce((a, b) => a + b.likes, 0) / last12Vids.length;
     let avgComments = last12Vids.reduce((a, b) => a + b.comments, 0) / last12Vids.length;
-    let result =[avgViews, avgLikes, avgComments];
     
-    return result;
+    return {
+        'averageViews' : avgViews,
+        'averageLikes' : avgLikes,
+        'averageComments' : avgComments
+    }
 }
 
 //Last 90 Dayss calcs the average views, likes, and comments for vids 15 to 90 days old. Next step is to remove any outliers 
@@ -151,11 +181,4 @@ function last90Days(stats) {
         'averageLikes' : avgLikes,
         'averageComments' : avgComments
     }
-}
-
-function parseId(url) {
-    var regExp = /^.*((youtu.be\/)|(v\/)|(c\/)|(channel\/)|(@)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?^\/]*).*/;
-    var match = url.match(regExp);
-
-    return [(match&&match[10].length>=0)? match[10] : false, match[5]];
 }
