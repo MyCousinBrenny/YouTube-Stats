@@ -27,7 +27,6 @@ var channelLinks = require('./key.js').channelLinks;
         console.log([chanId, last12Stats(vidsData), last90Days(vidsData)]);    
 }})();
 
-
 //Pivoted app to calc from channel name serach.  Will use below function for chrome extension when on video page.
 async function channelIdFromVid(key, vidId) {
     let urlString =
