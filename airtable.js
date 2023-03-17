@@ -1,4 +1,4 @@
-var apiKey = require('./key.js');
+var apiKey = 'AIzaSyA4LuXRhruFIU_wukJ0JGCKCA16I4gWQmY';
 var table = base.getTable("Channels");
 var channelField = table.getField("Channel Link");
 var l12Views = table.getField("Last 12 - Avg Views");
@@ -7,29 +7,36 @@ var l12Comments = table.getField("Last 12 - Avg Comments");
 var l90Views = table.getField("Last 90 Days - Avg Views");
 var l90Likes = table.getField("Last 90 Days - Avg Likes");
 var l90Comments = table.getField("Last 90 Days - Avg Comments");
+var lastCalc = table.getField("Last Calc Date");
 var videoStats = [];
-var vidsData = [];
-var parts = ['statistics', 'snippet', 'contentDetails'];
+var bucket = table.getField("Bucket");
 
+var parts = ['statistics', 'snippet', 'contentDetails'];
 //Grabs urls from AirTable table
-var query = await table.selectRecordsAsync({fields: [channelField.id]});
+var query = await table.selectRecordsAsync({fields: [channelField.id, lastCalc.id, bucket.id]});
 
 //Parse out the channel name
 var bareItems = query.records
     .map((record) => ({
         record: record,
         channelId: parseId(record.getCellValueAsString(channelField.id)),
+        lastCalcDate: record.getCellValue(lastCalc.id),
+        bucket : record.getCellValueAsString(bucket.id)
     }))
     .filter((item) => item.channelId);
 
 //Determine channel id from name, grab videos, and calculate the stats
 for(let channel in bareItems){
     var chanId;
-    vidsData = [];
+    var vidsData = [];
+    if (new Date(bareItems[channel].lastCalcDate) <= new Date(new Date().setDate(new Date().getDate() - 20)) || bareItems[channel].lastCalcDate == null && bareItems[channel].bucket !== 'Removed') {
+    } else {
+        continue;
+    }
     if (bareItems[channel].channelId[1] == 'channel/') {
         chanId = bareItems[channel].channelId[0];
     } else if (bareItems[channel].channelId[1] == false) {
-        continue
+        continue;
     } else {
         chanId = await channelId(apiKey, bareItems[channel].channelId[0])
     };
@@ -55,7 +62,8 @@ for(let channel in bareItems){
             [l12Comments.id] : workingSet[1].last12.averageComments,
             [l90Views.id] : workingSet[2].last90.averageViews,
             [l90Likes.id] : workingSet[2].last90.averageLikes,
-            [l90Comments.id] : workingSet[2].last90.averageComments
+            [l90Comments.id] : workingSet[2].last90.averageComments,
+            [lastCalc.id] : new Date()
         }
     }));    
     
