@@ -1,4 +1,4 @@
-var apiKey = 'AIzaSyA4LuXRhruFIU_wukJ0JGCKCA16I4gWQmY';
+var apiKey = '';
 var table = base.getTable("Channels");
 var channelField = table.getField("Channel Link");
 var l12Views = table.getField("Last 12 - Avg Views");
