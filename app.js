@@ -1,9 +1,13 @@
-var apiKey = require('./key.js').apiKey;
+//var apiKey = require('./key.js').apiKey;
+var apiKey = 'AIzaSyDSw7kT1s2gitxWLTPwHLuVdnk83OTdWt0';
+var channelLinks = [
+    'youtube.com/c/JunkyardDigs'
+];
 var vidTest = 'Gkr8pipJzXA';
 var parts = ['statistics', 'snippet', 'contentDetails'];
 var itemArray = [];
 var videoStats = [];
-var channelLinks = require('./key.js').channelLinks;
+//var channelLinks = require('./key.js').channelLinks;
 
 //Add conditional start to parse by channel username or vid Id
 //Main app function in IIFE below - Functions broken out seperately for potential future uses
@@ -23,9 +27,9 @@ var channelLinks = require('./key.js').channelLinks;
         } while (new Date(Math.min(...videoStats.map(vidDates =>
             new Date(vidDates.date)))) >= new Date((new Date().setDate(new Date().getDate() - 90))));
         
-        let results = ([last12Stats(vidsData).averageViews, last90Days(vidsData).averageViews]); 
+        let calcReturn = last12Stats(vidsData).averageViews; 
         console.log(results);    
-        results.innerHTML = results;
+        results.innerHTML = `${calcReturn}`;
 }})();
 
 //Pivoted app to calc from channel name serach.  Will use below function for chrome extension when on video page.
