@@ -24,7 +24,7 @@ var channelLinks = require('./key.js').channelLinks;
             new Date(vidDates.date)))) >= new Date((new Date().setDate(new Date().getDate() - 90))));
         //console.log(chanId);
         //console.log(vidsData);
-        console.log([chanId, last12Stats(vidsData), last90Days(vidsData)]);    
+        console.log([last12Stats(vidsData).averageViews, last90Days(vidsData).last90Days.averageViews]);    
 }})();
 
 //Pivoted app to calc from channel name serach.  Will use below function for chrome extension when on video page.
@@ -121,11 +121,9 @@ function last12Stats(stats) {
     let avgComments = last12Vids.reduce((a, b) => a + b.comments, 0) / last12Vids.length;
     
     return {
-        last12Vids :{
-            averageViews : avgViews,
-            averageLikes : avgLikes,
-            averageComments : avgComments
-        }
+        averageViews : avgViews,
+        averageLikes : avgLikes,
+        averageComments : avgComments
     }
 }
 
@@ -149,11 +147,9 @@ function last90Days(stats) {
     let avgComments = last90Vids.reduce((a, b) => a + b.comments, 0) / last90Vids.length;
 
     return {
-        last90Days :{
-            averageViews : avgViews,
-            averageLikes : avgLikes,
-            averageComments : avgComments
-        }
+        averageViews : avgViews,
+        averageLikes : avgLikes,
+        averageComments : avgComments
     }
 }
 
