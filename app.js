@@ -22,9 +22,10 @@ var channelLinks = require('./key.js').channelLinks;
             var vidsData = await videoData(apiKey, vids.itemArray, parts);
         } while (new Date(Math.min(...videoStats.map(vidDates =>
             new Date(vidDates.date)))) >= new Date((new Date().setDate(new Date().getDate() - 90))));
-        //console.log(chanId);
-        //console.log(vidsData);
-        console.log([last12Stats(vidsData).averageViews, last90Days(vidsData).last90Days.averageViews]);    
+        
+        let results = ([last12Stats(vidsData).averageViews, last90Days(vidsData).averageViews]); 
+        console.log(results);    
+        results.innerHTML = results;
 }})();
 
 //Pivoted app to calc from channel name serach.  Will use below function for chrome extension when on video page.
