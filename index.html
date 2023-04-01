@@ -2,13 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible">
+    <meta name="viewport">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+	<link rel="stylesheet" src="css/dark-theme.css" id="theme-stylesheet">
     <title>YouTube Channel Stats</title>
-    <script src="app.js" type="module"></script>
+    <script src="app.js" type="module" defer></script>
 </head>
 <body>
    <h1>YouTube Channel Stats</h1> 
-   <div id="results"></div>
+   <div id="first">
+        <h2 id="firstResult"></h2>
+        <ul id="result1"></ul>
+   </div>
+   <div id="second">
+    <h2 id="secondResult"></h2>
+    <ul>
+        <li id="result2"></li>
+    </ul>
+</div>
 </body>
 </html>

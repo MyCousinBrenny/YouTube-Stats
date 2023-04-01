@@ -22,9 +22,15 @@ import { channelLinks } from './exports.js';
         } while (new Date(Math.min(...videoStats.map(vidDates =>
             new Date(vidDates.date)))) >= new Date((new Date().setDate(new Date().getDate() - 90))));
         
-        let calcReturn = last12Stats(vidsData).averageViews; 
-        console.log(results);    
-        results.innerHTML = `${calcReturn}`;
+        let firstResults = last12Stats(vidsData);    
+        firstResult.innerHTML = `${firstResults.name}`;
+        //document.getElementById("result1").innerHTML = firstResults.results;
+        console.log(firstResults.results);
+        for (const property in firstResults.results) {
+            let li = document.createElement("li");
+            li.innerText = `${property}: ${firstResults.results[property].toLocaleString()}`;
+            document.getElementById("result1").appendChild(li);
+        };
 }})();
 
 //Pivoted app to calc from channel name serach.  Will use below function for chrome extension when on video page.
@@ -121,9 +127,12 @@ function last12Stats(stats) {
     let avgComments = last12Vids.reduce((a, b) => a + b.comments, 0) / last12Vids.length;
     
     return {
-        averageViews : avgViews,
-        averageLikes : avgLikes,
-        averageComments : avgComments
+        name: "Last 12 Videos Stat Calc",
+        results : {
+            "Average Views" : avgViews,
+            "Average Likes" : avgLikes,
+            "Average Comments" : avgComments
+        }
     }
 }
 
@@ -147,9 +156,12 @@ function last90Days(stats) {
     let avgComments = last90Vids.reduce((a, b) => a + b.comments, 0) / last90Vids.length;
 
     return {
-        averageViews : avgViews,
-        averageLikes : avgLikes,
-        averageComments : avgComments
+        name: "Last 90 Days Stat Calc",
+        results: {
+            "Average Views" : avgViews,
+            "Average Likes" : avgLikes,
+            "Average Comments" : avgComments
+        }
     }
 }
 
