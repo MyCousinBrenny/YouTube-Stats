@@ -1,5 +1,5 @@
 //var apiKey = require('./key.js').apiKey;
-var apiKey = 'AIzaSyDSw7kT1s2gitxWLTPwHLuVdnk83OTdWt0';
+var apiKey = '';
 var channelLinks = [
     'youtube.com/c/JunkyardDigs'
 ];
