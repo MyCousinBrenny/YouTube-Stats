@@ -121,9 +121,11 @@ function last12Stats(stats) {
     let avgComments = last12Vids.reduce((a, b) => a + b.comments, 0) / last12Vids.length;
     
     return {
-        'averageViews' : avgViews,
-        'averageLikes' : avgLikes,
-        'averageComments' : avgComments
+        last12Vids :{
+            averageViews : avgViews,
+            averageLikes : avgLikes,
+            averageComments : avgComments
+        }
     }
 }
 
@@ -147,9 +149,11 @@ function last90Days(stats) {
     let avgComments = last90Vids.reduce((a, b) => a + b.comments, 0) / last90Vids.length;
 
     return {
-        'averageViews' : avgViews,
-        'averageLikes' : avgLikes,
-        'averageComments' : avgComments
+        last90Days :{
+            averageViews : avgViews,
+            averageLikes : avgLikes,
+            averageComments : avgComments
+        }
     }
 }
 
