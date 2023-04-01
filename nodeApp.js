@@ -1,16 +1,16 @@
-import { apiKey } from './exports.js';
+var apiKey = require('./key.js').apiKey;
 var parts = ['statistics', 'snippet', 'contentDetails'];
 var itemArray = [];
 var videoStats = [];
-import { channelLinks } from './exports.js';
+var channelLinks = require('./key.js').channelLinks;
 
 //Main app function in IIFE below - Functions broken out seperately for potential future uses
 (async function () {
     for(let channel in channelLinks){
         if ((parseId(channelLinks[channel], 5)) == 'channel/') {
-            var chanId = parseId(channelLinks[channel], 10);   
-
+            var chanId = parseId(channelLinks[channel], 10);            
         } else {
+            
             var chanId = await channelId(apiKey, parseId(channelLinks[channel], 10));
         }
         var uploadPlaylist = "UU" + chanId.substring(2);
