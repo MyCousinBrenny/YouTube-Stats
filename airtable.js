@@ -56,7 +56,7 @@ for (let channel in bareItems) {
     } while (oldestVid >= new Date(new Date().setDate(new Date().getDate() - 90)));
 
     let workingSet = [bareItems[channel].record.id, { last12: last12Stats(vidsData) }, { last90: last90Days(vidsData) }];
-    let records = workingSet.map(() => ({
+    let records = ([{
         id: workingSet[0],
         fields: {
             [l12Views.id]: workingSet[1].last12.averageViews,
@@ -67,7 +67,7 @@ for (let channel in bareItems) {
             [l90Comments.id]: workingSet[2].last90.averageComments,
             [lastCalc.id]: new Date()
         }
-    }));
+    }]);
 
     await table.updateRecordsAsync(records);
 }
