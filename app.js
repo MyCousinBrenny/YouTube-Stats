@@ -141,9 +141,9 @@ function last12Stats(stats) {
     return {
         name: "Last 12 Videos Stats",
         results : {
-            "Average Views" : avgViews,
-            "Average Likes" : avgLikes,
-            "Average Comments" : avgComments
+            "Average Views" : avgViews.toLocaleString(),
+            "Average Likes" : avgLikes.toLocaleString(),
+            "Average Comments" : avgComments.toLocaleString()
         }
     }
 }
@@ -170,9 +170,9 @@ function last90Days(stats) {
     return {
         name: "Last 90 Days Stat Calc",
         results: {
-            "Average Views" : avgViews,
-            "Average Likes" : avgLikes,
-            "Average Comments" : avgComments
+            "Average Views" : avgViews.toLocaleString(),
+            "Average Likes" : avgLikes.toLocaleString(),
+            "Average Comments" : avgComments.toLocaleString()
         }
     }
 }

@@ -18,6 +18,7 @@
 }
 
 .title {
+  text-align: center;
   font-weight: bold;
   font-size: 1.5rem;
   text-transform: capitalize;
@@ -26,6 +27,14 @@
   text-overflow: ellipsis;
   overflow: hidden;
   flex-grow: 1;
+  margin-bottom: 0.5rem;
+  font-size: 1.25rem;
+}
+
+.dataBody {
+  text-align: left;
+  margin-bottom: 0.1rem;
+  font-size: 0.95rem;
 }
 
 .loading {
@@ -41,16 +50,19 @@
 }
 
 .loading-title-text {
-  width: 100%;
+  width: 50%;
   height: 0.5rem;
   border-radius: 0.125rem;
+  text-align: center;
 }
 
 .loading-title-text:last-child {
-  width: 100%;
+  width: 50%;
   height: 0.5rem;
   margin-bottom: 1rem;
   border-radius: 0.125rem;
+  align-content: center;
+  align-self: center;
 }
 
 @keyframes result-loading {
