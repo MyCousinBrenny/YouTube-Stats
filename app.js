@@ -3,6 +3,8 @@ var parts = ['statistics', 'snippet', 'contentDetails'];
 var itemArray = [];
 var videoStats = [];
 import { channelLinks } from './exports.js';
+import { resultTemp } from './frontend.js';
+import { grid } from './frontend.js';
 
 //Main app function in IIFE below - Functions broken out seperately for potential future uses
 (async function () {
@@ -22,15 +24,25 @@ import { channelLinks } from './exports.js';
         } while (new Date(Math.min(...videoStats.map(vidDates =>
             new Date(vidDates.date)))) >= new Date((new Date().setDate(new Date().getDate() - 90))));
         
-        let firstResults = last12Stats(vidsData);    
-        firstResult.innerHTML = `${firstResults.name}`;
+        let firstResults = last12Stats(vidsData);
+        grid.innerHTML = ''; 
+        const div = resultTemp.content.cloneNode(true)
+        div.querySelector('[data-title]').textContent = firstResults.name;
+        div.querySelector('[data-body]').textContent = '';
+        for (const metric in firstResults.results) {
+            let newDiv = document.createElement('div');
+            newDiv.id = metric;
+            newDiv.className = "dataBody";
+            newDiv.innerHTML = metric + " : " + firstResults.results[metric];
+            //document.body.appendChild(newDiv);
+            div.querySelector('[data-body]').appendChild(newDiv);
+        }
+        grid.append(div);  
+        //firstResult.innerHTML = `${firstResults.name}`;
         //document.getElementById("result1").innerHTML = firstResults.results;
+        console.log(firstResults.name);
         console.log(firstResults.results);
-        for (const property in firstResults.results) {
-            let li = document.createElement("li");
-            li.innerText = `${property}: ${firstResults.results[property].toLocaleString()}`;
-            document.getElementById("result1").appendChild(li);
-        };
+
 }})();
 
 //Pivoted app to calc from channel name serach.  Will use below function for chrome extension when on video page.
@@ -127,7 +139,7 @@ function last12Stats(stats) {
     let avgComments = last12Vids.reduce((a, b) => a + b.comments, 0) / last12Vids.length;
     
     return {
-        name: "Last 12 Videos Stat Calc",
+        name: "Last 12 Videos Stats",
         results : {
             "Average Views" : avgViews,
             "Average Likes" : avgLikes,
