@@ -29,12 +29,14 @@
   flex-grow: 1;
   margin-bottom: 0.5rem;
   font-size: 1.25rem;
+  color:hsl(200, 5%, 30%);
 }
 
 .dataBody {
   text-align: right;
   margin-bottom: 0.25rem;
   font-size: 0.8rem;
+  color:hsl(200, 5%, 40%);
 }
 
 .metricTitle {
@@ -46,6 +48,7 @@
   width: 50%;
   float: right;
   padding-right: 30%;
+  font-weight: 600;
 }
 
 .loading {
