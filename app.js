@@ -30,12 +30,17 @@ import { grid } from './frontend.js';
         div.querySelector('[data-title]').textContent = firstResults.name;
         div.querySelector('[data-body]').textContent = '';
         for (const metric in firstResults.results) {
-            let newDiv = document.createElement('div');
-            newDiv.id = metric;
-            newDiv.className = "dataBody";
-            newDiv.innerHTML = metric + " : " + firstResults.results[metric];
-            //document.body.appendChild(newDiv);
-            div.querySelector('[data-body]').appendChild(newDiv);
+            let newDivTitle = document.createElement('div');
+            newDivTitle.id = metric;
+            newDivTitle.className = "dataBody metricTitle";
+            newDivTitle.innerHTML = metric + " : ";
+            let newDivValue = document.createElement('div');
+            newDivValue.id = metric + "Value";
+            newDivValue.className = "dataBody metricValue";
+            newDivValue.innerHTML = firstResults.results[metric];
+
+            div.querySelector('[data-body]').appendChild(newDivTitle);
+            div.querySelector('[data-body]').appendChild(newDivValue);
         }
         grid.append(div);  
         //firstResult.innerHTML = `${firstResults.name}`;
