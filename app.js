@@ -146,9 +146,9 @@ function last12Stats(stats) {
     return {
         name: "Last 12 Videos Stats",
         results : {
-            "Average Views" : avgViews.toLocaleString(),
-            "Average Likes" : avgLikes.toLocaleString(),
-            "Average Comments" : avgComments.toLocaleString()
+            "Average Views" : avgViews.toLocaleString("en", {maximumFractionDigits: 0}),
+            "Average Likes" : avgLikes.toLocaleString("en", {maximumFractionDigits: 0}),
+            "Average Comments" : avgComments.toLocaleString("en", {maximumFractionDigits: 0})
         }
     }
 }

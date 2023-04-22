@@ -45,11 +45,12 @@
 }
 
 .metricValue {
-  width: 50%;
-  float: right;
-  padding-right: 30%;
+  width: auto;
+  float: left;
+  padding-left: 1%;
   font-weight: 600;
 }
+
 
 .loading {
   opacity: .7;
