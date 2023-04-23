@@ -1,8 +1,8 @@
-import { apiKey } from './exports.js';
+import { apiKey } from '../exports.js';
 var parts = ['statistics', 'snippet', 'contentDetails'];
 var itemArray = [];
 var videoStats = [];
-import { channelLinks } from './exports.js';
+import { channelLinks } from '../exports.js';
 import { resultTemp } from './frontend.js';
 import { grid } from './frontend.js';
 
