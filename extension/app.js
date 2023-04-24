@@ -1,20 +1,49 @@
-import { apiKey } from '../exports.js';
+import { apiKey } from './exports.js';
 var parts = ['statistics', 'snippet', 'contentDetails'];
 var itemArray = [];
 var videoStats = [];
-import { channelLinks } from '../exports.js';
+import { channelLinks } from './exports.js';
 import { resultTemp } from './frontend.js';
 import { grid } from './frontend.js';
 
 //Main app function in IIFE below - Functions broken out seperately for potential future uses
 (async function () {
     for(let channel in channelLinks){
-        if ((parseId(channelLinks[channel], 5)) == 'channel/') {
+        //Not using search API and pulling channel ID from page source code
+        /*if ((parseId(channelLinks[channel], 5)) == 'channel/') {
             var chanId = parseId(channelLinks[channel], 10);   
 
         } else {
             var chanId = await channelId(apiKey, parseId(channelLinks[channel], 10));
-        }
+        }*/
+        let [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+        let bodyText = await chrome.scripting.executeScript({
+            target:  {tabId: tab.id},
+            func: () => {
+                let body = document.body.outerHTML;
+                return(body);
+            }});
+        console.log(bodyText);
+        
+        chrome.runtime.onMessage.addListener((message, sender) => {
+            console.log("listening");
+            if (!message || typeof message !== 'object' || !sender.tab){
+                // Ignore messages that weren't sent by our content script.
+                return;
+            }
+            
+            switch (message.action){
+                case 'receiveBodyText': {
+                    channelId(sender.tab, message.bodyText);
+                    break;
+                }
+            }
+        });
+           /* var ytCode = currentTab.body.outherHTML;
+            var chanId = ytCode.match(/,"externalId":"([^".]*)/);
+            console.log(ytCode);*/
+        
+        
         var uploadPlaylist = "UU" + chanId.substring(2);
         var nextToken = '';
         do {
@@ -50,8 +79,8 @@ import { grid } from './frontend.js';
 
 }})();
 
-//Pivoted app to calc from channel name serach.  Will use below function for chrome extension when on video page.
-async function channelIdFromVid(key, vidId) {
+//Pulling channel ID from YouTube page and not using below functions anymore
+/*async function channelIdFromVid(key, vidId) {
     let urlString =
         "https://www.googleapis.com/youtube/v3/videos" +
         `?key=${key}&id=${vidId}&part=snippet`;
@@ -62,9 +91,9 @@ async function channelIdFromVid(key, vidId) {
     let chanData = await response.json();
 
     return(chanData.items[0].snippet.channelId);
-}
+}*/
 
-async function channelId(key, chanName) {
+/*async function searchChannelId(key, chanName) {
     let urlString =
         "https://www.googleapis.com/youtube/v3/search" +
         `?key=${key}&q=${chanName}&part=snippet`;
@@ -75,6 +104,11 @@ async function channelId(key, chanName) {
     let chanData = await response.json();
 
     return(chanData.items[0].snippet.channelId);
+}*/
+
+function channelId(tab, bodyText){
+    console.log(tab);
+    console.log("here");
 }
 
 async function channelData(key, playlistId, tokenId) {
