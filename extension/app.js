@@ -6,16 +6,11 @@ import { channelLinks } from './exports.js';
 import { resultTemp } from './frontend.js';
 import { grid } from './frontend.js';
 
+
 //Main app function in IIFE below - Functions broken out seperately for potential future uses
-(async function () {
+    (async function () {
+    
 
-        //Not using search API and pulling channel ID from page source code
-        /*if ((parseId(channelLinks[channel], 5)) == 'channel/') {
-            var chanId = parseId(channelLinks[channel], 10);   
-
-        } else {
-            var chanId = await channelId(apiKey, parseId(channelLinks[channel], 10));
-        }*/
         let [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
         let [bodyText] = await chrome.scripting.executeScript({
             target:  {tabId: tab.id},
@@ -23,12 +18,11 @@ import { grid } from './frontend.js';
                 let body = document.body.innerHTML;
                 return(body);
             }});
-
+        console.log(bodyText);
+        
         var response = await bodyText.result;
         var chanId = response.match(/,"externalChannelId":"([^".]*)/);
-        console.log(chanId[1]);
-        
-        
+          
         var uploadPlaylist = "UU" + chanId[1].substring(2);
         var nextToken = '';
         do {
