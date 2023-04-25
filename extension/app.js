@@ -17,34 +17,19 @@ import { grid } from './frontend.js';
             var chanId = await channelId(apiKey, parseId(channelLinks[channel], 10));
         }*/
         let [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
-        let bodyText = await chrome.scripting.executeScript({
+        let [bodyText] = await chrome.scripting.executeScript({
             target:  {tabId: tab.id},
             func: () => {
-                let body = document.body.outerHTML;
+                let body = document.body.innerHTML;
                 return(body);
             }});
-        console.log(bodyText);
-        
-        chrome.runtime.onMessage.addListener((message, sender) => {
-            console.log("listening");
-            if (!message || typeof message !== 'object' || !sender.tab){
-                // Ignore messages that weren't sent by our content script.
-                return;
-            }
-            
-            switch (message.action){
-                case 'receiveBodyText': {
-                    channelId(sender.tab, message.bodyText);
-                    break;
-                }
-            }
-        });
-           /* var ytCode = currentTab.body.outherHTML;
-            var chanId = ytCode.match(/,"externalId":"([^".]*)/);
-            console.log(ytCode);*/
+
+        var response = await bodyText.result;
+        var chanId = response.match(/,"externalChannelId":"([^".]*)/);
+        console.log(chanId[1]);
         
         
-        var uploadPlaylist = "UU" + chanId.substring(2);
+        var uploadPlaylist = "UU" + chanId[1].substring(2);
         var nextToken = '';
         do {
             var vids = await channelData(apiKey, uploadPlaylist, nextToken);
