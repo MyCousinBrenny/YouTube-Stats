@@ -8,7 +8,7 @@ import { grid } from './frontend.js';
 
 //Main app function in IIFE below - Functions broken out seperately for potential future uses
 (async function () {
-    for(let channel in channelLinks){
+
         //Not using search API and pulling channel ID from page source code
         /*if ((parseId(channelLinks[channel], 5)) == 'channel/') {
             var chanId = parseId(channelLinks[channel], 10);   
@@ -62,7 +62,7 @@ import { grid } from './frontend.js';
         console.log(firstResults.name);
         console.log(firstResults.results);
 
-}})();
+})();
 
 //Pulling channel ID from YouTube page and not using below functions anymore
 /*async function channelIdFromVid(key, vidId) {

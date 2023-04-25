@@ -3,6 +3,10 @@
 	font-family: Roboto, Arial, Helvetica, sans-serif;
 }
 
+body {
+  width: 20rem;
+}
+
 .grid {
   display: grid;
   gap: 1rem;
