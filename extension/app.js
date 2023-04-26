@@ -18,16 +18,31 @@ import { grid } from './frontend.js';
                 let body = document.body.innerHTML;
                 return(body);
             }});
-        console.log(bodyText);
         
         var response = await bodyText.result;
         var chanId = response.match(/,"externalChannelId":"([^".]*)/);
-          
-        var uploadPlaylist = "UU" + chanId[1].substring(2);
+
+        if(chanId == null) {
+            chanId = response.match(/,"externalId":"([^".]*)/);
+        }else if (chanId == null) {
+            chanId = response.match(/,\"channelId\":\"([^".]*)/);
+        }
+
+        console.log(chanId);
+        try{
+            var uploadPlaylist = "UU" + chanId[1].substring(2);
+        }
+        catch{
+            alert("Not a YouTube page");
+        }
         var nextToken = '';
         do {
             var vids = await channelData(apiKey, uploadPlaylist, nextToken);
-            nextToken = vids.nextPage;
+            if(vids.nextPage == ''){
+                break;
+            }else{ 
+                nextToken = vids.nextPage;
+            }
             var vidsData = await videoData(apiKey, vids.itemArray, parts);
         } while (new Date(Math.min(...videoStats.map(vidDates =>
             new Date(vidDates.date)))) >= new Date((new Date().setDate(new Date().getDate() - 90))));
