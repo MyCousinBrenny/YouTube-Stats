@@ -25,10 +25,11 @@ var bareItems = query.records
     }))
     .filter((item) => item.channelId);
 
-//Determine channel id from name, grab videos, and calculate the stats
+//Determine channel ID, grab videos, and calculate the stats
 for (let channel in bareItems) {
     var chanId;
     var vidsData = [];
+    //Only calculate the channel stats if the last calc is older than 20 days
     if (new Date(bareItems[channel].lastCalcDate) <= new Date(new Date().setDate(new Date().getDate() - 20)) && bareItems[channel].bucket.substring(0, 5) == 'Added') {
     } else {
         continue;
@@ -41,9 +42,16 @@ for (let channel in bareItems) {
     } else {
         chanId = await channelId(apiKey, bareItems[channel].channelId[0])
     };*/
+
+    //Pull the channel ID from YouTube
     chanId = await channelId(bareItems[channel].channelId)
+
+    //The Uploads playlist is the same as the channel ID, but the second character is a U vs a C
     var uploadPlaylist = "UU" + chanId.substring(2);
     var nextToken = '';
+
+    /*Grab all the videos in the last 90 days.  Max results is 50 so need to make multiple API calls to get the subsequent pages 
+    if there are more than 50 videos in the last 90 days*/
     do {
         var vidDates = [];
         var vids = await channelData(apiKey, uploadPlaylist, nextToken);
@@ -55,7 +63,10 @@ for (let channel in bareItems) {
         var oldestVid = vidDates[vidDates.length - 1];
     } while (oldestVid >= new Date(new Date().setDate(new Date().getDate() - 90)));
 
+    //Create JSON with channel stat results
     let workingSet = [bareItems[channel].record.id, { last12: last12Stats(vidsData) }, { last90: last90Days(vidsData) }];
+    
+    //Stage an object to pass back to Airtable
     let records = ([{
         id: workingSet[0],
         fields: {
@@ -69,6 +80,7 @@ for (let channel in bareItems) {
         }
     }]);
 
+    //Stats passed back to Airtable and Airtable will appened the results to the respective rows
     await table.updateRecordsAsync(records);
 }
 
@@ -96,6 +108,7 @@ async function channelId(key, chanName) {
     return (chanData.items[0].snippet.channelId);
 }*/
 
+//Pull the channel ID from the YouTube page source code
 async function channelId(chanLink) {
     let urlString;
     switch(chanLink.substring(0, 3)) {
@@ -108,7 +121,7 @@ async function channelId(chanLink) {
         case 'htt':
             urlString = chanLink;
     }
-    //let urlString = 'https://www.' + chanLink;
+
     let response = await remoteFetchAsync(urlString);
     let htmlString = await response.text();
     let result = htmlString.match(/,"externalId":"([^".]*)/);
@@ -116,6 +129,7 @@ async function channelId(chanLink) {
     return result[1];
 }
 
+//Pull the videos from the YouTube channel from the uploads playlist
 async function channelData(key, playlistId, tokenId) {
     let urlString =
         "https://www.googleapis.com/youtube/v3/playlistItems" +
@@ -137,6 +151,7 @@ async function channelData(key, playlistId, tokenId) {
     };
 }
 
+//For each video pulled for a channel, get the statisics for the videos
 async function videoData(key, vidIds, parts) {
     videoStats = [];
     let urlString =
