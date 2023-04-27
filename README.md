@@ -1,2 +1,3 @@
 # YouTube-Stats
  
+The YouTube Channel Stats app calculates various stats for a YouTube channels that can be leveraged by YouTube marketing angencies to determine what a sponsorship or ad spot might be worth for a given chennel.  An app was built for both an Airtable extension and Airtable automation script for use in client Airtable databases where they track their YouTube clients.  The app is also being ported to a Chrome Extension for clients to instantly calculate channel stats while browsing YouTube.
