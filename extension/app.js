@@ -12,6 +12,8 @@ import { grid } from './frontend.js';
     
 
         let [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+        console.log(tab);
+
         let [bodyText] = await chrome.scripting.executeScript({
             target:  {tabId: tab.id},
             func: () => {
@@ -20,15 +22,17 @@ import { grid } from './frontend.js';
             }});
         
         var response = await bodyText.result;
-        var chanId = response.match(/,"externalChannelId":"([^".]*)/);
-
+        console.log(response);
+        var chanId = '';
+        
+        chanId = response.match(/,"externalChannelId":"([^".]*)/);
         if(chanId == null) {
             chanId = response.match(/,"externalId":"([^".]*)/);
         }else if (chanId == null) {
             chanId = response.match(/,\"channelId\":\"([^".]*)/);
         }
 
-        console.log(chanId);
+        console.log(chanId[1]);
         try{
             var uploadPlaylist = "UU" + chanId[1].substring(2);
         }

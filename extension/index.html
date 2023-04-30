@@ -10,21 +10,24 @@
     <script src="app.js" type="module" defer></script>
 </head>
 <body>
-    <h2 align="center" style="color:hsl(200, 5%, 30%)">YouTube Channel Stats</h2>
+    <div id="popupDiv">
+        <h2 align="center" style="color:hsl(200, 5%, 30%)">YouTube Channel Stats</h2>
 
-    <div class="grid"></div>
-    <template id="result-template">
-        <div class="result">
-            <div class="title" data-title>
-                <div class="loading loading-title-text"></div>
-                <div class="loading loading-title-text"></div>
-            </div>
-            <div class="dataBody" data-body>
-                <div class="loading loading-text"></div>
-                <div class="loading loading-text"></div>
-                <div class="loading loading-text"></div>
-            </div>
-        </div>
-    </template>
+        <div class="grid">
+            <template id="result-template">
+                <div class="result">
+                    <div class="title" data-title>
+                        <div class="loading loading-title-text"></div>
+                        <div class="loading loading-title-text"></div>
+                    </div>
+                    <div class="dataBody" data-body>
+                        <div class="loading loading-text"></div>
+                        <div class="loading loading-text"></div>
+                        <div class="loading loading-text"></div>
+                    </div>
+                </div>
+            </template>
+        </div>    
+    </div>
 </body>
 </html>
