@@ -4,26 +4,19 @@
     "manifest_version": 3,
     "description": "This extension calculates various stats about the current YouTube channel.",
     "action": {
-        "default_icon": "icon.png",
-        "default_popup": "index.html"
+        "default_icon": "icon.png"
     },
     "background": {
         "service_worker": "back.js"
     },
-    "content_scripts": [
-        {
-          "matches": ["https://*.youtube.com/*"],
-          "css": ["theme.css"],
-          "js": ["content.js"]
-        }
-      ],
+  
     "permissions": [
         "activeTab",
         "scripting"
     ],
     "web_accessible_resources": [
         {
-            "resources": ["index.html"],
+            "resources": ["index.html", "content.js"],
             "matches": ["https://*.youtube.com/*"],
             "use_dynamic_url": true
         }
