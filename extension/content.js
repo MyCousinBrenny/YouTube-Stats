@@ -1,12 +1,11 @@
 var tempURL = chrome.runtime.getURL("index.html");
 
 async function temps() {
-    var templates = document.createElement('template');
+    var templates = document.createElement('DIV');
     templates.innerHTML = await (await fetch(tempURL)).text();
-    var parse = new DOMParser();
-    var doc = parse.parseFromString(templates, "text/html");
-    return doc;
+    document.body.appendChild(templates);
+    return templates;
 }
 
-console.log(temps().all);
+console.log(temps());
 //var insertDiv = temps().getElementById('popupDiv');

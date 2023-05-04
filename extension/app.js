@@ -7,12 +7,27 @@ import { resultTemp } from './frontend.js';
 import { grid } from './frontend.js';
 
 
+chrome.runtime.onMessage.addListener(
+    
+    function(request, sender, sendResponse) {
+    console.log('response received');
+       if(request.change === "page_changed") console.log('response received', request.payload)
+       sendResponse({status: "done"});
+    }
+ );
+
+
+/*chrome.runtime.onMessage.addListener(request, s, se => {
+    console.log(request & "page changed");
+    if (request.change === "page_changed") {
+        console.log(request & "page changed");
+    }});*/
+     
 //Main app function in IIFE below - Functions broken out seperately for potential future uses
     (async function () {
     
 
         let [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
-        console.log(tab);
 
         let [bodyText] = await chrome.scripting.executeScript({
             target:  {tabId: tab.id},
@@ -22,7 +37,7 @@ import { grid } from './frontend.js';
             }});
         
         var response = await bodyText.result;
-        console.log(response);
+
         var chanId = '';
         
         chanId = response.match(/,"externalChannelId":"([^".]*)/);
@@ -32,7 +47,6 @@ import { grid } from './frontend.js';
             chanId = response.match(/,\"channelId\":\"([^".]*)/);
         }
 
-        console.log(chanId[1]);
         try{
             var uploadPlaylist = "UU" + chanId[1].substring(2);
         }

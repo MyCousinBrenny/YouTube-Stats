@@ -5,8 +5,8 @@ for (let i = 0; i < 2; i++) {
     grid.append(resultTemp.content.cloneNode(true))
 }
 
-// W#Schools code to make a DIV element draggable:
-dragElement(document.getElementById("popupDiv"));
+// W#Schools code to make a DIV element draggable.  Will be for version 2 when not a popup:
+/*dragElement(document.getElementById("popupDiv"));
 
 function dragElement(elmnt) {
     var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
@@ -41,4 +41,4 @@ function dragElement(elmnt) {
         document.onmouseup = null;
         document.onmousemove = null;
     }
-}
+}*/

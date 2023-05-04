@@ -5,19 +5,17 @@
 
 body {
   width: 20rem;
-  height: 600px;
-  background-color: rgb(138, 136, 135);
+  background-color: white;
 }
 
 #popupDiv{
-  position: absolute;
-  width: 300px;
+  position: relative;
   border-style: ridge;
   background-color: white;
   transition-property: opacity;
   transition-duration: 500ms;
   opacity: 50%;
- 
+  
 }
 
 #popupDiv:hover{
