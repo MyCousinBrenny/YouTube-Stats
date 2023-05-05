@@ -5,12 +5,23 @@
 
 body {
   width: 20rem;
+  background-color: white;
 }
 
-.popHeader{
-  margin: 0rem;
-  padding: 0rem;
-  gap: 0rem;
+#popupDiv{
+  position: relative;
+  border-style: ridge;
+  background-color: white;
+  transition-property: opacity;
+  transition-duration: 500ms;
+  opacity: 50%;
+  
+}
+
+#popupDiv:hover{
+  opacity: 100%;
+  transition-property: opacity;
+  transition-duration: 500ms;
 }
 
 .grid {

@@ -2,33 +2,18 @@ import { apiKey } from './exports.js';
 var parts = ['statistics', 'snippet', 'contentDetails'];
 var itemArray = [];
 var videoStats = [];
-import { channelLinks } from './exports.js';
 import { resultTemp } from './frontend.js';
 import { grid } from './frontend.js';
-
-
-chrome.runtime.onMessage.addListener(
-    
-    function(request, sender, sendResponse) {
-    console.log('response received');
-       if(request.change === "page_changed") console.log('response received', request.payload)
-       sendResponse({status: "done"});
-    }
- );
-
 
 /*chrome.runtime.onMessage.addListener(request, s, se => {
     console.log(request & "page changed");
     if (request.change === "page_changed") {
         console.log(request & "page changed");
-    }});*/
+    }});*/ //For future use in v2
      
 //Main app function in IIFE below - Functions broken out seperately for potential future uses
-    (async function () {
-    
-
+    (async function () {    
         let [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
-
         let [bodyText] = await chrome.scripting.executeScript({
             target:  {tabId: tab.id},
             func: () => {
@@ -37,9 +22,7 @@ chrome.runtime.onMessage.addListener(
             }});
         
         var response = await bodyText.result;
-
         var chanId = '';
-        
         chanId = response.match(/,"externalChannelId":"([^".]*)/);
         if(chanId == null) {
             chanId = response.match(/,"externalId":"([^".]*)/);
@@ -47,12 +30,7 @@ chrome.runtime.onMessage.addListener(
             chanId = response.match(/,\"channelId\":\"([^".]*)/);
         }
 
-        try{
-            var uploadPlaylist = "UU" + chanId[1].substring(2);
-        }
-        catch{
-            alert("Not a YouTube page");
-        }
+        var uploadPlaylist = "UU" + chanId[1].substring(2);
         var nextToken = '';
         do {
             var vids = await channelData(apiKey, uploadPlaylist, nextToken);
@@ -61,34 +39,36 @@ chrome.runtime.onMessage.addListener(
             }else{ 
                 nextToken = vids.nextPage;
             }
+
             var vidsData = await videoData(apiKey, vids.itemArray, parts);
+
         } while (new Date(Math.min(...videoStats.map(vidDates =>
             new Date(vidDates.date)))) >= new Date((new Date().setDate(new Date().getDate() - 90))));
-        
-        let firstResults = last12Stats(vidsData);
-        grid.innerHTML = ''; 
-        const div = resultTemp.content.cloneNode(true)
-        div.querySelector('[data-title]').textContent = firstResults.name;
-        div.querySelector('[data-body]').textContent = '';
-        for (const metric in firstResults.results) {
-            let newDivTitle = document.createElement('div');
-            newDivTitle.id = metric;
-            newDivTitle.className = "dataBody metricTitle";
-            newDivTitle.innerHTML = metric + " : ";
-            let newDivValue = document.createElement('div');
-            newDivValue.id = metric + "Value";
-            newDivValue.className = "dataBody metricValue";
-            newDivValue.innerHTML = firstResults.results[metric];
+        console.log(vidsData[0].channel);
+        let firstResults = [last12Stats(vidsData), last90Days(vidsData)];
+        console.log(firstResults);
+        grid.innerHTML = '';
+        document.querySelector('.chanTitle').textContent = vidsData[0].channel;
+        for (const i in firstResults){
+            const div = resultTemp.content.cloneNode(true)
+            div.querySelector('[data-title]').textContent = firstResults[i].name;
+            div.querySelector('[data-body]').textContent = '';
+            for (const metric in firstResults[i].results) {
+                let newDivTitle = document.createElement('div');
+                newDivTitle.id = metric;
+                newDivTitle.className = "dataBody metricTitle";
+                newDivTitle.innerHTML = metric + " : ";
+                let newDivValue = document.createElement('div');
+                newDivValue.id = metric + "Value";
+                newDivValue.className = "dataBody metricValue";
+                newDivValue.innerHTML = firstResults[i].results[metric];
 
-            div.querySelector('[data-body]').appendChild(newDivTitle);
-            div.querySelector('[data-body]').appendChild(newDivValue);
+                div.querySelector('[data-body]').appendChild(newDivTitle);
+                div.querySelector('[data-body]').appendChild(newDivValue);
+            }
+
+            grid.append(div);  
         }
-        grid.append(div);  
-        //firstResult.innerHTML = `${firstResults.name}`;
-        //document.getElementById("result1").innerHTML = firstResults.results;
-        console.log(firstResults.name);
-        console.log(firstResults.results);
-
 })();
 
 //Pulling channel ID from YouTube page and not using below functions anymore
@@ -100,6 +80,7 @@ chrome.runtime.onMessage.addListener(
     if (!response.ok) {
         throw new Error(await response.text());
     }
+
     let chanData = await response.json();
 
     return(chanData.items[0].snippet.channelId);
@@ -113,15 +94,11 @@ chrome.runtime.onMessage.addListener(
     if (!response.ok) {
         throw new Error(await response.text());
     }
+
     let chanData = await response.json();
 
     return(chanData.items[0].snippet.channelId);
 }*/
-
-function channelId(tab, bodyText){
-    console.log(tab);
-    console.log("here");
-}
 
 async function channelData(key, playlistId, tokenId) {
     let urlString =
@@ -131,14 +108,18 @@ async function channelData(key, playlistId, tokenId) {
     if (!response.ok) {
         throw new Error(await response.text());
     }
+
     let channelVids = await response.json();
     for(var key in channelVids.items) {
         itemArray[key] = channelVids.items[key].contentDetails.videoId;
     }
+
     let nextPage = channelVids.nextPageToken;
 
-    return {'itemArray' : itemArray, 
-        'nextPage' : nextPage};
+    return {
+        'itemArray' : itemArray, 
+        'nextPage' : nextPage
+    };
 }
 
 async function videoData(key, vidIds, parts) {
@@ -150,16 +131,20 @@ async function videoData(key, vidIds, parts) {
     if (!response.ok) {
         throw new Error(await response.text());
     }
+
     let vidsData = await response.json();
     let keyNumber = 0;
     for(let key in vidsData.items) {
         if(videoStats.length > 0) {
             keyNumber = videoStats.length;
-        } 
+        }
+
         videoStats.push({
             number: keyNumber,
             key: vidsData.items[key].id,
             title: vidsData.items[key].snippet.title,
+            channel: vidsData.items[key].snippet.channelTitle,
+            channelId: vidsData.items[key].snippet.channelId,
             views: Number(vidsData.items[key].statistics.viewCount),
             likes: Number(vidsData.items[key].statistics.likeCount),
             comments: Number(vidsData.items[key].statistics.commentCount),
@@ -221,9 +206,9 @@ function last90Days(stats) {
     return {
         name: "Last 90 Days Stat Calc",
         results: {
-            "Average Views" : avgViews.toLocaleString(),
-            "Average Likes" : avgLikes.toLocaleString(),
-            "Average Comments" : avgComments.toLocaleString()
+            "Average Views" : avgViews.toLocaleString("en", {maximumFractionDigits: 0}),
+            "Average Likes" : avgLikes.toLocaleString("en", {maximumFractionDigits: 0}),
+            "Average Comments" : avgComments.toLocaleString("en", {maximumFractionDigits: 0})
         }
     }
 }
