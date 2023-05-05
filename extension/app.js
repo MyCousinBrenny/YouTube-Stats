@@ -2,15 +2,18 @@ import { apiKey } from './exports.js';
 var parts = ['statistics', 'snippet', 'contentDetails'];
 var itemArray = [];
 var videoStats = [];
-import { resultTemp } from './frontend.js';
-import { grid } from './frontend.js';
+const grid = document.querySelector('.grid');
+const resultTemp = document.getElementById('result-template');
 
 /*chrome.runtime.onMessage.addListener(request, s, se => {
     console.log(request & "page changed");
     if (request.change === "page_changed") {
         console.log(request & "page changed");
     }});*/ //For future use in v2
-     
+  
+for (let i = 0; i < 2; i++) {
+    grid.append(resultTemp.content.cloneNode(true))
+}    
 //Main app function in IIFE below - Functions broken out seperately for potential future uses
     (async function () {    
         let [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
@@ -46,12 +49,13 @@ import { grid } from './frontend.js';
             new Date(vidDates.date)))) >= new Date((new Date().setDate(new Date().getDate() - 90))));
         console.log(vidsData[0].channel);
         let firstResults = [last12Stats(vidsData), last90Days(vidsData)];
-        console.log(firstResults);
         grid.innerHTML = '';
         document.querySelector('.chanTitle').textContent = vidsData[0].channel;
         for (const i in firstResults){
-            const div = resultTemp.content.cloneNode(true)
+            const div = resultTemp.content.cloneNode(true);
+            console.log(div);
             div.querySelector('[data-title]').textContent = firstResults[i].name;
+            div.querySelector('[tool-tip]').textContent = '';
             div.querySelector('[data-body]').textContent = '';
             for (const metric in firstResults[i].results) {
                 let newDivTitle = document.createElement('div');
@@ -69,6 +73,7 @@ import { grid } from './frontend.js';
 
             grid.append(div);  
         }
+        document.querySelector('.tooltip').textContent = 'ss?';
 })();
 
 //Pulling channel ID from YouTube page and not using below functions anymore

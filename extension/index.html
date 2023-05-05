@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="frontend.js" type="module" defer></script>
     <meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -12,15 +11,15 @@
 <body>
     <div id="popupDiv">
         <div class="popHeader">
-            <h2 align="center" style="color:hsl(200, 5%, 30%)">YouTube Channel Stats</h2>
-            <h3 align="center" style="color:hsl(200, 5%, 30%)" class="chanTitle"></h3>
-            <p align="center" style="color:hsl(200, 5%, 30%)">(Refresh browser to recalculate stats)</p>
+            <div id="headTitle" style="color:hsl(200, 5%, 30%)"><img class="inline-icon" src="icon.png"></i>YouTube Channel Stats</div>
+            <div id="headChan" align="center" style="color:rgb(255, 0, 0)" class="chanTitle"></div>
+            <div id="headInstructions" align="center" style="color:hsl(200, 5%, 30%)">(Refresh browser to calculate new stats)</div>
         </div>
 
         <div class="grid">
             <template id="result-template">
                 <div class="result">
-                    <div class="title" data-title>
+                    <div class="title" data-title><div class="tooltip" tooltip></div>
                         <div class="loading loading-title-text"></div>
                         <div class="loading loading-title-text"></div>
                     </div>

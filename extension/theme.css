@@ -8,9 +8,33 @@ body {
 }
 
 .popHeader{
-  margin: 0rem;
-  padding: 0rem;
-  gap: 0rem;
+  border-bottom: hsl(200, 5%, 30%);
+  border-bottom-style: dotted;
+  border-bottom-width: .05em;
+}
+
+#headTitle{
+  font-size: 1.5em;
+  font-weight: bold;
+  padding-top: .5em;
+  padding-left: .5em;
+}
+
+.inline-icon {
+  display:inline-flex ;
+
+  padding-right: .5em;
+  vertical-align:middle ;
+}
+
+#headChan{
+  font-size: 1.25em;
+  font-weight: bold;
+}
+
+#headInstructions{
+  padding-top: .25em;
+  padding-bottom: 1em;
 }
 
 .grid {
@@ -30,7 +54,6 @@ body {
 .title {
   text-align: center;
   font-weight: bold;
-  font-size: 1.2rem;
   text-transform: capitalize;
   word-wrap: none;
   white-space: nowrap;
@@ -38,7 +61,21 @@ body {
   overflow: hidden;
   flex-grow: 1;
   margin-bottom: 0.5rem;
-  font-size: 1.25rem;
+  font-size: 1rem;
+  color:hsl(200, 5%, 30%);
+}
+
+.tooltip {
+  text-align: center;
+  font-weight: bold;
+  text-transform: capitalize;
+  word-wrap: none;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  flex-grow: 1;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
   color:hsl(200, 5%, 30%);
 }
 
@@ -60,7 +97,6 @@ body {
   padding-left: 1%;
   font-weight: 600;
 }
-
 
 .loading {
   opacity: .7;
