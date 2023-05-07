@@ -55,6 +55,7 @@ for (let i = 0; i < 2; i++) {
             const div = await resultTemp.content.cloneNode(true);
             console.log(div);
             div.querySelector('[data-title]').textContent = firstResults[i].name;
+            div.querySelector('.tooltiptext').textContent = firstResults[i].explanation;
             div.querySelector('[data-body]').textContent = '';
             for (const metric in firstResults[i].results) {
                 let newDivTitle = document.createElement('div');
@@ -180,6 +181,7 @@ function last12Stats(stats) {
     
     return {
         name: "Last 12 Videos Stats",
+        explanation: "This calc takes the last 12 uploaded videos, removes the two with the highest and lowest view count, then calculates average views, likes, and comments for the middle 10 videos.  'Shorts' are excluded from the calc.",
         results : {
             "Average Views" : avgViews.toLocaleString("en", {maximumFractionDigits: 0}),
             "Average Likes" : avgLikes.toLocaleString("en", {maximumFractionDigits: 0}),
@@ -209,6 +211,7 @@ function last90Days(stats) {
 
     return {
         name: "Last 90 Days Stat Calc",
+        explanation: "This calc takes the videos uploaded 15 to 90 days ago from today, and calculates average views, likes, and comments.  'Shorts' are excluded from the calc.",
         results: {
             "Average Views" : avgViews.toLocaleString("en", {maximumFractionDigits: 0}),
             "Average Likes" : avgLikes.toLocaleString("en", {maximumFractionDigits: 0}),
