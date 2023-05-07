@@ -3,8 +3,8 @@ var parts = ['statistics', 'snippet', 'contentDetails'];
 var itemArray = [];
 var videoStats = [];
 const grid = document.querySelector('.grid');
-const resultTemp = document.getElementById('result-template');
-
+const resultTemp = document.getElementById('result-temp');
+console.log(resultTemp);
 /*chrome.runtime.onMessage.addListener(request, s, se => {
     console.log(request & "page changed");
     if (request.change === "page_changed") {
@@ -52,10 +52,9 @@ for (let i = 0; i < 2; i++) {
         grid.innerHTML = '';
         document.querySelector('.chanTitle').textContent = vidsData[0].channel;
         for (const i in firstResults){
-            const div = resultTemp.content.cloneNode(true);
+            const div = await resultTemp.content.cloneNode(true);
             console.log(div);
             div.querySelector('[data-title]').textContent = firstResults[i].name;
-            div.querySelector('[tool-tip]').textContent = '';
             div.querySelector('[data-body]').textContent = '';
             for (const metric in firstResults[i].results) {
                 let newDivTitle = document.createElement('div');
@@ -73,7 +72,7 @@ for (let i = 0; i < 2; i++) {
 
             grid.append(div);  
         }
-        document.querySelector('.tooltip').textContent = 'ss?';
+        
 })();
 
 //Pulling channel ID from YouTube page and not using below functions anymore
