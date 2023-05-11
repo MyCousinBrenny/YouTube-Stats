@@ -10,8 +10,7 @@
     },
   
     "permissions": [
-        "activeTab",
-        "scripting"
+        "activeTab"
     ],
 
     "host_permissions": [
