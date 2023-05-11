@@ -1,6 +1,6 @@
 {
     "name": "YouTube Channel Stats",
-    "version": "1.0",
+    "version": "1.1",
     "manifest_version": 3,
     "description": "This extension calculates various stats about the current YouTube channel.",
     "action": {

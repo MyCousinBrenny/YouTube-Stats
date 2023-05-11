@@ -59,9 +59,9 @@ for (let i = 0; i < 2; i++) {
             new Date(vidDates.date)))) >= new Date((new Date().setDate(new Date().getDate() - 90))));
         
         } catch(err) {
-            document.getElementById("headAlert").innerText = '(Stats Unavailable)';
+            document.getElementById("headAlert").innerText = '(Not a YouTube Channel or Video Page)';
             console.log(err);
-            
+            grid.innerHTML = '';
         }
 
         console.log(vidsData[0].channel);
