@@ -4,7 +4,7 @@ var itemArray = [];
 var videoStats = [];
 const grid = document.querySelector('.grid');
 const resultTemp = document.getElementById('result-temp');
-console.log(resultTemp);
+
 /*chrome.runtime.onMessage.addListener(request, s, se => {
     console.log(request & "page changed");
     if (request.change === "page_changed") {
@@ -14,9 +14,12 @@ console.log(resultTemp);
 for (let i = 0; i < 2; i++) {
     grid.append(resultTemp.content.cloneNode(true))
 }    
+
 //Main app function in IIFE below - Functions broken out seperately for potential future uses
-    (async function () {    
-        let [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+    (async function () {   
+        
+        //Problem with below code is that YouTube is single page application and document doesn't update on page change
+        /*let [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
         let [bodyText] = await chrome.scripting.executeScript({
             target:  {tabId: tab.id},
             func: () => {
@@ -24,15 +27,22 @@ for (let i = 0; i < 2; i++) {
                 return(body);
             }});
         
-        var response = await bodyText.result;
-        var chanId = '';
-        chanId = response.match(/,"externalChannelId":"([^".]*)/);
-        if(chanId == null) {
-            chanId = response.match(/,"externalId":"([^".]*)/);
-        }else if (chanId == null) {
-            chanId = response.match(/,\"channelId\":\"([^".]*)/);
-        }
+        var response = await bodyText.result;*/     
+        try {
+        var currentTab = await getCurrentTab();
 
+        let response = await fetch(currentTab.url);
+        let htmlString = await response.text();
+
+        var chanId = '';
+        chanId = htmlString.match(/,"externalChannelId":"([^".]*)/);
+        if(chanId == null) {
+            chanId = htmlString.match(/,"externalId":"([^".]*)/);
+        }else if (chanId == null) {
+            chanId = htmlString.match(/,\"channelId\":\"([^".]*)/);
+        }
+        console.log(chanId);
+        
         var uploadPlaylist = "UU" + chanId[1].substring(2);
         var nextToken = '';
         do {
@@ -47,8 +57,19 @@ for (let i = 0; i < 2; i++) {
 
         } while (new Date(Math.min(...videoStats.map(vidDates =>
             new Date(vidDates.date)))) >= new Date((new Date().setDate(new Date().getDate() - 90))));
+        
+        } catch(err) {
+            document.getElementById("headAlert").innerText = '(Stats Unavailable)';
+            console.log(err);
+            
+        }
+
         console.log(vidsData[0].channel);
-        let firstResults = [last12Stats(vidsData), last90Days(vidsData)];
+        try{
+        var firstResults = [last12Stats(vidsData), last90Days(vidsData)];
+        }catch(err){
+            document.getElementById("headAlert").innerText = `(Stats Unavailable for ${vidsData[0].channel})`;
+        }
         grid.innerHTML = '';
         document.querySelector('.chanTitle').textContent = vidsData[0].channel;
         for (const i in firstResults){
@@ -104,6 +125,14 @@ for (let i = 0; i < 2; i++) {
 
     return(chanData.items[0].snippet.channelId);
 }*/
+
+//Grabbing URL from current tab and fetching the document for it
+async function getCurrentTab() {
+    let queryOptions = { active: true, currentWindow: true };
+    let [tab] = await chrome.tabs.query(queryOptions);
+
+    return tab;
+}
 
 async function channelData(key, playlistId, tokenId) {
     let urlString =
