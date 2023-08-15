@@ -52,17 +52,20 @@ for (let channel in bareItems) {
 
     /*Grab all the videos in the last 90 days.  Max results is 50 so need to make multiple API calls to get the subsequent pages 
     if there are more than 50 videos in the last 90 days*/
-    do {
-        var vidDates = [];
-        var vids = await channelData(apiKey, uploadPlaylist, nextToken);
-        nextToken = vids.nextPage;
-        vidsData.push(...await videoData(apiKey, vids.itemArray, parts));
-        for (let dates in vidsData) {
-            vidDates.push(new Date(vidsData[dates].date));
-        }
-        var oldestVid = vidDates[vidDates.length - 1];
-    } while (oldestVid >= new Date(new Date().setDate(new Date().getDate() - 90)));
-
+    try {
+        do {
+            var vidDates = [];
+            var vids = await channelData(apiKey, uploadPlaylist, nextToken);
+            nextToken = vids.nextPage;
+            vidsData.push(...await videoData(apiKey, vids.itemArray, parts));
+            for (let dates in vidsData) {
+                vidDates.push(new Date(vidsData[dates].date));
+            }
+            var oldestVid = vidDates[vidDates.length - 1];
+        } while (oldestVid >= new Date(new Date().setDate(new Date().getDate() - 90)));
+    } catch (error) {
+        break;
+    }
     //Create JSON with channel stat results
     let workingSet = [bareItems[channel].record.id, { last12: last12Stats(vidsData) }, { last90: last90Days(vidsData) }];
     
